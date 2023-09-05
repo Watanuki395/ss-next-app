@@ -1,2 +1,2 @@
 # ss-next-app
-example of nextjs login with firebase
+example of nextjs login with firebase...
