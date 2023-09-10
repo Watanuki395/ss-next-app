@@ -16,10 +16,13 @@
     "@mui/icons-material": "^5.14.7",
     "@mui/material": "^5.14.7",
     "eslint-config-next": "13.4.19",
+    "formik": "^2.4.4",
+    "framer-motion": "^10.16.4",
     "next": "13.4.19",
     "next-pwa": "^5.6.0",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "yup": "^1.2.0"
   },
   "devDependencies": {
     "eslint": "^8.48.0",
