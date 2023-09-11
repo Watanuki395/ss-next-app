@@ -1,6 +1,6 @@
 "use client";
 import styled from "@emotion/styled";
-import Link from "@mui/material/Link";
+import Button from "@mui/material/Button";
 import { motion } from "framer-motion";
 
 export const StyledLinks = styled(motion.div)({
@@ -10,7 +10,7 @@ export const StyledLinks = styled(motion.div)({
   marginTop: "1rem",
 });
 
-export const StyledLink = styled(Link)({
+export const StyledLink = styled(Button)({
   component: "button",
   variant: "body2",
 });

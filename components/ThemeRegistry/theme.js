@@ -18,8 +18,8 @@ const theme = createTheme({
     },
   },
   background: {
-    default: "#121212", // Cambia el color de fondo predeterminado
-    paper: "#121212", // Cambia el color de fondo de los elementos "paper" (como las tarjetas)
+    default: "#121212",
+    paper: "#121212",
   },
   typography: {
     fontFamily: roboto.style.fontFamily,
@@ -32,6 +32,22 @@ const theme = createTheme({
             backgroundColor: "#60a5fa",
           }),
         }),
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          // Cambia los estilos de todos los TextField
+          // Por ejemplo, puedes cambiar el color de fondo y el color del texto
+          backgroundColor: "inherit",
+          color: "#FFFFFF",
+          input: {
+            "&:-webkit-autofill": {
+              WebkitBoxShadow: "0 0 0 100px #121212  inset",
+              WebkitTextFillColor: "default",
+            },
+          },
+        },
       },
     },
   },

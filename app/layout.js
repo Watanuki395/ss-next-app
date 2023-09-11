@@ -1,4 +1,5 @@
 import { Inter } from "next/font/google";
+import { AuthProvider } from "./context/AuthContext";
 import ThemeRegistry from "@/components/ThemeRegistry/ThemeRegistry";
 import Navbar from "../components/Navbar/Navbar";
 
@@ -14,10 +15,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <ThemeRegistry>
-          <Navbar />
-          {children}
-        </ThemeRegistry>
+        <AuthProvider>
+          <ThemeRegistry>
+            <Navbar />
+            {children}
+          </ThemeRegistry>
+        </AuthProvider>
       </body>
     </html>
   );
