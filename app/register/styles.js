@@ -19,7 +19,8 @@ export const StyledContainer = styled(motion.div)({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  marginTop: "2rem",
+  marginTop: "3rem",
+  maxWidth: "840px",
 });
 
 export const StyledForm = styled.form({

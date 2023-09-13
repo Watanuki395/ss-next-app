@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
@@ -57,12 +58,12 @@ const validationSchema = Yup.object().shape({
 });
 
 const RegisterPage = () => {
+  const router = useRouter();
   const ERROR_CODE_ACCOUNT_EXISTS = "auth/email-already-in-use";
-
   const ERROR_MSG_ACCOUNT_EXISTS = `
     Una cuenta con este correo electronico ya existe.
   `;
-  const { signup } = useAuth();
+  const { signup, loading, setLoading } = useAuth();
 
   const [error, setError] = useState(false);
 
@@ -81,10 +82,11 @@ const RegisterPage = () => {
     };
     try {
       if (vals.email && vals.password) {
+        setLoading(true);
         await signup(vals.email, vals.password, data)
           .then(() => {
             setError(false);
-            //navigate("/dashboard");
+            router.push("/dashboard");
             setNotify({
               isOpen: true,
               type: "success",
@@ -124,6 +126,7 @@ const RegisterPage = () => {
         transition: "opacity 300ms ease-in",
       }}
     >
+      <Box sx={{ width: "100%" }}>{loading && <LinearProgress />}</Box>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
@@ -134,10 +137,6 @@ const RegisterPage = () => {
       >
         {({ errors, touched, isSubmitting }) => (
           <Form>
-            <Box sx={{ width: "100%", paddingTop: "1rem" }}>
-              {isSubmitting && <LinearProgress />}
-            </Box>
-
             <StyledContainer>
               <Avatar sx={{ m: 2, bgcolor: "secondary.main" }}>
                 <LockOutlinedIcon />

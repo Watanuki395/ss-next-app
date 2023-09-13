@@ -1,5 +1,6 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -32,6 +33,8 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userInfo, setUserInfo] = useState([]);
+
+  const router = useRouter();
 
   const signup = async (email, password, data) => {
     await createUserWithEmailAndPassword(auth, email, password);
@@ -72,6 +75,9 @@ export function AuthProvider({ children }) {
       setUser(currentUser);
       if (currentUser?.uid) {
         getMyUserById(currentUser.uid);
+      } else if (currentUser === null) {
+        setUser(null);
+        //router.push("/");
       }
       setLoading(false);
     });
@@ -87,6 +93,7 @@ export function AuthProvider({ children }) {
         userInfo,
         logout,
         loading,
+        setLoading,
         loginWithGoogle,
         resetPassword,
       }}
