@@ -15,17 +15,31 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import CardGiftcardIcon from "@mui/icons-material/CardGiftcard";
 import Link from "next/link";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import Settings from "@mui/icons-material/Settings";
+import Logout from "@mui/icons-material/Logout";
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 
 import { useAuth } from "../../app/context/AuthContext";
 
 export default function Navbar() {
   const router = useRouter();
-  const pages = ["about"];
+  const pages = [
+    { label: "about", name: "reglas" },
+    { label: "dashboard", name: "Inicio" },
+  ];
   const settings = [
-    { label: "Profile", action: () => handleProfile() },
-    { label: "Account", action: () => handleAccount() },
-    { label: "Dashboard", action: () => handleDashboard() },
-    { label: "Logout", action: () => handleLogout() },
+    {
+      label: "Perfil",
+      icon: <AccountCircleRoundedIcon />,
+      action: () => handleProfile(),
+    },
+    {
+      label: "Configuración",
+      icon: <Settings />,
+      action: () => handleLogout(),
+    },
+    { label: "Salir", icon: <Logout />, action: () => handleLogout() },
   ];
 
   const { user, logout, loading, setLoading } = useAuth();
@@ -127,9 +141,15 @@ export default function Navbar() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
+                <Link key={page.label} href={`/${page.label}`}>
+                  <Button
+                    key={page.label}
+                    onClick={handleCloseNavMenu}
+                    sx={{ my: 2, color: "white", display: "block" }}
+                  >
+                    {page.name}
+                  </Button>
+                </Link>
               ))}
             </Menu>
           </Box>
@@ -139,13 +159,13 @@ export default function Navbar() {
 
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
-              <Link key={page} href={`/${page}`}>
+              <Link key={page.label} href={`/${page.label}`}>
                 <Button
-                  key={page}
+                  key={page.label}
                   onClick={handleCloseNavMenu}
                   sx={{ my: 2, color: "white", display: "block" }}
                 >
-                  {page}
+                  {page.name}
                 </Button>
               </Link>
             ))}
@@ -176,6 +196,7 @@ export default function Navbar() {
               >
                 {settings.map((setting) => (
                   <MenuItem key={setting.label} onClick={setting.action}>
+                    <ListItemIcon>{setting.icon}</ListItemIcon>
                     <Typography textAlign="center">{setting.label}</Typography>
                   </MenuItem>
                 ))}
