@@ -19,15 +19,14 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+import Skeleton from "@mui/material/Skeleton";
 
 import { useAuth } from "../../app/context/AuthContext";
 
 export default function Navbar() {
   const router = useRouter();
-  const pages = [
-    { label: "about", name: "reglas" },
-    { label: "dashboard", name: "Inicio" },
-  ];
+  const { user, logout, loading, setLoading } = useAuth();
+
   const settings = [
     {
       label: "Perfil",
@@ -37,12 +36,21 @@ export default function Navbar() {
     {
       label: "Configuración",
       icon: <Settings />,
-      action: () => handleLogout(),
+      action: () => handleAccount(),
     },
     { label: "Salir", icon: <Logout />, action: () => handleLogout() },
   ];
 
-  const { user, logout, loading, setLoading } = useAuth();
+  const pages = [];
+
+  if (user) {
+    pages.push(
+      { label: "about", name: "reglas" },
+      { label: "dashboard", name: "Inicio" }
+    );
+  } else {
+    pages.pop();
+  }
 
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -63,17 +71,16 @@ export default function Navbar() {
   };
 
   const handleProfile = () => {
-    // Lógica para la acción "Profile"
-    handleCloseUserMenu();
+    try {
+      router.push("/profile");
+      handleCloseUserMenu();
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+    }
   };
 
   const handleAccount = () => {
     // Lógica para la acción "Account"
-    handleCloseUserMenu();
-  };
-
-  const handleDashboard = () => {
-    // Lógica para la acción "Dashboard"
     handleCloseUserMenu();
   };
 
@@ -171,7 +178,13 @@ export default function Navbar() {
             ))}
           </Box>
 
-          {!user || loading ? null : (
+          {!user && !loading ? (
+            <Link href={`/login`}>
+              <Button variant="contained">Iniciar Sesión</Button>
+            </Link>
+          ) : loading ? (
+            <Skeleton variant="circular" width={40} height={40} />
+          ) : (
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Ver más">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

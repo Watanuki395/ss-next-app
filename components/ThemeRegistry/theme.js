@@ -43,7 +43,7 @@ const theme = createTheme({
       main: "#3f51b5",
     },
     secondary: {
-      main: "#f50057",
+      main: "#CE93D8",
     },
   },
   background: {
@@ -91,12 +91,21 @@ const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          border: "1px solid #575d82",
           borderRadius: "10px",
           overflow: "visible",
-          transition: "box-shadow 0.3s ease-in-out", // Agrega una transición suave
+          transition: "box-shadow 0.3s ease-in-out",
           "&:hover": {
-            boxShadow: "0px 0px 20px #575d82", // Aplica una sombra al hacer hover
+            //boxShadow: "0px 0px 20px #575d82",
+          },
+        },
+      },
+    },
+    MuiFab: {
+      styleOverrides: {
+        root: {
+          transition: "box-shadow 0.3s ease-in-out",
+          "&:hover": {
+            boxShadow: "0px 0px 5px #575d82",
           },
         },
       },

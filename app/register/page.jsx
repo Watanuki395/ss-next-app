@@ -146,9 +146,7 @@ const RegisterPage = () => {
               </Typography>
 
               <Grid container spacing={2}>
-                {/* Utiliza Grid para controlar el diseño */}
                 <Grid item xs={12} sm={6}>
-                  {/* En pantallas pequeñas, cada campo se mostrará en una columna */}
                   <Field
                     name="fname"
                     fullWidth
@@ -159,7 +157,6 @@ const RegisterPage = () => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  {/* En pantallas pequeñas, cada campo se mostrará en una columna */}
                   <Field
                     name="lname"
                     fullWidth

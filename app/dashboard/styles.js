@@ -2,9 +2,10 @@ import styled from "@emotion/styled";
 
 export const DashboardHeader = styled.div({
   display: "flex",
-  flexDirection: "column",
-  alignItems: "flex-start",
+  flexDirection: "row",
+  //alignItems: "flex-start",
   marginBottom: "4rem",
+  marginTop: "1rem",
   justifyContent: "space-between",
 });
 

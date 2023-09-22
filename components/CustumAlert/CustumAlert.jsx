@@ -26,7 +26,7 @@ export function CustumAlert({ notify, setNotify }) {
       >
         <Collapse in={notify.isOpen}>
           <Alert
-            severity={notify.type}
+            severity={notify.type ? notify.type : "info"}
             action={
               <IconButton
                 aria-label="close"

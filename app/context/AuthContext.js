@@ -64,17 +64,19 @@ export function AuthProvider({ children }) {
     try {
       const doc = await getUser(id);
       setUserInfo({ ...doc.data() });
+      console.log({ ...doc.data() });
     } catch (err) {
       console.log(err);
     }
   };
 
   useEffect(() => {
-    const unsubuscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubuscribe = onAuthStateChanged(auth, async (currentUser) => {
       console.log({ currentUser }); //TODO: removed it for PROD
-      setUser(currentUser);
+
       if (currentUser?.uid) {
-        getMyUserById(currentUser.uid);
+        await getMyUserById(currentUser?.uid);
+        setUser(currentUser);
       } else if (currentUser === null) {
         setUser(null);
         //router.push("/");
@@ -91,6 +93,7 @@ export function AuthProvider({ children }) {
         login,
         user,
         userInfo,
+        getMyUserById,
         logout,
         loading,
         setLoading,

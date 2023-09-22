@@ -6,7 +6,7 @@ import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
 
 const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuth();
+  const { user, loading, userInfo } = useAuth();
   const router = useRouter();
 
   // Verifica si el usuario está autenticado
@@ -18,9 +18,9 @@ const ProtectedRoute = ({ children }) => {
   }, [user, loading, router]);
 
   // Si el usuario está autenticado o si la autenticación está en proceso, muestra el contenido de la ruta protegida
-  return user ? (
+  return user && userInfo ? (
     children
-  ) : loading ? (
+  ) : loading || !userInfo ? (
     <Box sx={{ width: "100%", height: "100vh" }}>
       <Skeleton
         animation="wave"

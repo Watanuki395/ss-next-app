@@ -2,7 +2,7 @@ import React from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
 import EventIcon from "@mui/icons-material/Event";
 
 import {
@@ -19,7 +19,7 @@ const SummaryChart = ({ title, num, description }) => {
           display: "grid",
           gridTemplateColumns: "64px 1fr",
           gridColumnGap: "2.5rem",
-          minWidth: "23rem",
+          minWidth: "22rem",
         }}
       >
         <IconContainer>

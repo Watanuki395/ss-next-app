@@ -62,6 +62,7 @@ const LoginPage = () => {
           })
           .catch((error) => {
             console.log(error);
+            setLoading(false);
             if ((error.code = ERROR_CODE_WRONG_PASS)) {
               setNotify({
                 isOpen: true,
@@ -73,6 +74,7 @@ const LoginPage = () => {
           });
       }
     } catch (err) {
+      setLoading(false);
       setNotify({
         isOpen: true,
         type: "error",
