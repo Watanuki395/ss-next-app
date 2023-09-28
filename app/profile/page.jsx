@@ -11,7 +11,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Link from "next/link";
 
 import { useAuth } from "../context/AuthContext";
-import { updateUser } from "../firebase/api";
+import { updateInfo } from "../firebase/api";
 
 import { CustumAlert } from "@/components/CustumAlert/CustumAlert";
 import { Formik, Form, Field } from "formik";
@@ -20,6 +20,7 @@ import * as Yup from "yup";
 import { ProfileHeader, StyledContainer } from "./styles";
 
 function ProfilePage() {
+  const collectionName = "users";
   const stringToColor = (string) => {
     let hash = 0;
     let i;
@@ -74,15 +75,15 @@ function ProfilePage() {
   });
 
   const initialValues = {
-    fname: userInfo.fname,
-    lname: userInfo.lname,
+    fname: userInfo?.fname,
+    lname: userInfo?.lname,
     email: user?.email,
   };
 
   const handleSubmit = async (vals) => {
     if (vals && user.uid) {
       setLoading(true);
-      await updateUser(user.uid, vals).then(() => {
+      await updateInfo(user.uid, collectionName, vals).then(() => {
         setNotify({
           isOpen: true,
           type: "success",

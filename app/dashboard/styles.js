@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { motion } from "framer-motion";
 
 export const DashboardHeader = styled.div({
   display: "flex",
@@ -36,3 +37,22 @@ export const ContentGrid = styled.div`
   grid-template-columns: 1fr;
   row-gap: 1.5rem;
 `;
+
+const containerVariants = {
+  hidden: { opacity: 0, y: -20 },
+  visible: { opacity: 1, y: 0 },
+};
+
+export const StyledContainer = styled(motion.div)({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  marginTop: "1rem",
+});
+
+StyledContainer.defaultProps = {
+  initial: "hidden",
+  animate: "visible",
+  variants: containerVariants,
+  transition: { duration: 0.8 },
+};

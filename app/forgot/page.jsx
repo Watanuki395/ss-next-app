@@ -14,14 +14,14 @@ const ForgotPassword = () => {
 
     // Realiza una solicitud al servidor para enviar el correo de recuperación
     try {
-      // Simulación de solicitud exitosa
-      await fetch("/api/send-recovery-email", {
-        method: "POST",
-        body: JSON.stringify({ email }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      // // Simulación de solicitud exitosa
+      // await fetch("/api/send-recovery-email", {
+      //   method: "POST",
+      //   body: JSON.stringify({ email }),
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      // });
 
       // Actualiza el estado para mostrar el mensaje de confirmación
       setFormSubmitted(true);

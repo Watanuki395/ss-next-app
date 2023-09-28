@@ -46,10 +46,6 @@ const theme = createTheme({
       main: "#CE93D8",
     },
   },
-  background: {
-    default: "#121212",
-    paper: "#121212",
-  },
   typography: {
     fontFamily: roboto.style.fontFamily,
   },
@@ -107,6 +103,21 @@ const theme = createTheme({
           "&:hover": {
             boxShadow: "0px 0px 5px #575d82",
           },
+        },
+      },
+    },
+    MuiPickersLayout: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "rgb(30,30,30)",
+        },
+      },
+    },
+    MuiDialogActions: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "rgb(10,10,10)",
+          fontSize: "30px",
         },
       },
     },

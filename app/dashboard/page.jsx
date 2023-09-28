@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { useRouter } from "next/navigation";
 import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -13,93 +14,93 @@ import PlayedList from "@/components/List/PlayedList";
 import { useAuth } from "../context/AuthContext";
 
 import {
+  StyledContainer,
   DashboardHeader,
   DashboardGrid,
   ChartGrid,
   ContentGrid,
-  // StyledTrendingUpOutlinedIcon,
-  // IconContainer,
-  // CardContentWrapper,
-  // DataTableWrapper
 } from "./styles";
 
 function Dashboard({ metrics }) {
+  const router = useRouter();
   const { user, userInfo } = useAuth();
 
   const handleCrearClick = () => {
-    console.log("Botón 'Crear' clicado");
+    router.push("/game");
   };
 
   return (
     <ProtectedRoute>
-      <Container>
-        <DashboardHeader>
-          <div>
-            <Typography variant={"h6"}>
-              Hola, <strong>{userInfo?.fname}</strong>
-            </Typography>
-            <Typography variant={"body2"}>
-              Aquí hay información que recopilamos para ti
-            </Typography>
-          </div>
-          <div>
-            <Box
-              sx={{
-                flexGrow: 1,
-                display: { xs: "flex", md: "none" },
-                padding: "1rem",
-              }}
-            >
-              <Fab color="primary">
-                <AddIcon />
-              </Fab>
-            </Box>
-            <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-              <Fab
-                variant="extended"
-                color="primary"
-                aria-label="crear"
-                onClick={handleCrearClick}
+      <StyledContainer>
+        <Container>
+          <DashboardHeader>
+            <div>
+              <Typography variant={"h6"}>
+                Hola, <strong>{userInfo?.fname}</strong>
+              </Typography>
+              <Typography variant={"body2"}>
+                Aquí hay información que recopilamos para ti
+              </Typography>
+            </div>
+            <div>
+              <Box
+                sx={{
+                  flexGrow: 1,
+                  display: { xs: "flex", md: "none" },
+                  padding: "1rem",
+                }}
               >
-                <AddIcon sx={{ mr: 1 }} />
-                Crear
-              </Fab>
-            </Box>
-          </div>
-        </DashboardHeader>
-        <DashboardGrid>
-          <ContentGrid>
-            <ChartGrid>
-              <SummaryChart
-                title="Participaciones"
-                num={1}
-                description="Ultimo mes"
-              />
-              <SummaryChart
-                title="Peticiones"
-                num={1}
-                description="Ultimo mes"
-              />
-            </ChartGrid>
-            <Box
-              sx={{
-                paddingTop: "2rem",
-                minWidth: "100%",
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
-              <Typography variant={"h6"}>Ultimos Juegos</Typography>
-              <PlayedList />
-            </Box>
-          </ContentGrid>
+                <Fab color="primary" onClick={handleCrearClick}>
+                  <AddIcon />
+                </Fab>
+              </Box>
+              <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+                <Fab
+                  variant="extended"
+                  color="primary"
+                  aria-label="crear"
+                  onClick={handleCrearClick}
+                >
+                  <AddIcon sx={{ mr: 1 }} />
+                  Crear
+                </Fab>
+              </Box>
+            </div>
+          </DashboardHeader>
+          <DashboardGrid>
+            <ContentGrid>
+              <ChartGrid>
+                <SummaryChart
+                  title="Participaciones"
+                  num={1}
+                  description="Ultimo mes"
+                />
+                <SummaryChart
+                  title="Peticiones"
+                  num={1}
+                  description="Ultimo mes"
+                />
+              </ChartGrid>
+              <Box
+                sx={{
+                  paddingTop: "2rem",
+                  minWidth: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <Typography variant={"h6"}>Ultimos Juegos</Typography>
+                <PlayedList />
+              </Box>
+            </ContentGrid>
 
-          <div>
-            <Typography variant={"h6"}>Ultimas Noticias</Typography>
-            <ActivityList></ActivityList>
-          </div>
-        </DashboardGrid>
-      </Container>
+            <div>
+              <Typography variant={"h6"}>Ultimas Noticias</Typography>
+              <ActivityList></ActivityList>
+            </div>
+          </DashboardGrid>
+        </Container>
+      </StyledContainer>
     </ProtectedRoute>
   );
 }

@@ -9,6 +9,7 @@ const nextConfig = {
     MESSAGING_SENDER_ID: process.env.MESSAGING_SENDER_ID,
     APP_ID: process.env.APP_ID,
     BUCKET_URL: process.env.BUCKET_URL,
+    QR_ROUTE: process.env.QR_ROUTE,
   },
 };
 

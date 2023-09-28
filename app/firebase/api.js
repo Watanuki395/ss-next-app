@@ -11,50 +11,72 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase";
 
-const collectionName = "users";
-
-export const saveUsers = (newUser) =>
+export const saveUsers = (collectionName, newUser) =>
   addDoc(collection(db, collectionName), newUser);
 
-export const updateUser = (id, updatedFields) =>
+export const updateInfo = (id, collectionName, updatedFields) =>
   updateDoc(doc(db, collectionName, id), updatedFields);
 
-export const onGetLinks = (callback) => {
+export const onGetLinks = (collectionName, callback) => {
   const unsub = onSnapshot(collection(db, collectionName), callback);
   return unsub;
 };
 
-export const getUsers = () => getDocs(collection(db, collectionName));
+export const getUsers = (collectionName) =>
+  getDocs(collection(db, collectionName));
 
-export const deleteUser = (id) => deleteDoc(doc(db, collectionName, id));
+export const deleteUser = (id, collectionName) =>
+  deleteDoc(doc(db, collectionName, id));
 
-export const getUser = (id) => getDoc(doc(db, collectionName, id));
+export const getUser = (id, collectionName) =>
+  getDoc(doc(db, collectionName, id));
 
 export const saveData = async (collectionName, documentId, data, user) => {
   const collectionRef = collection(db, collectionName);
 
   try {
-    const docRef = documentId
-      ? doc(collectionRef, documentId)
-      : await addDoc(collectionRef, {
+    if (collectionName && data && user) {
+      // Verificar si el documento existe antes de realizar operaciones de actualización
+      const docRef = documentId ? doc(collectionRef, documentId) : null;
+      const docSnap = docRef ? await getDoc(docRef) : null;
+
+      if (docSnap && docSnap.exists()) {
+        // Actualizar el documento existente
+        const updatedData = {
+          ...data,
+          updatedAt: serverTimestamp(),
+          updatedBy: user,
+        };
+        await updateDoc(docRef, updatedData);
+        return {
+          success: true,
+          message: `Documento ${docRef.id} actualizado con éxito.`,
+        };
+      } else {
+        // Crear un nuevo documento si no existe
+        const newData = {
           ...data,
           createdAt: serverTimestamp(),
           createdBy: user,
-        });
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      // Update existing document
-      await updateDoc(docRef, {
-        ...data,
-        updatedAt: serverTimestamp(),
-        updatedBy: user,
-      });
-      console.log(`Document with ID ${docRef.id} updated successfully.`);
+        };
+        const newDocRef = await addDoc(collectionRef, newData);
+        return {
+          success: true,
+          message: `Nuevo documento creado con ID ${newDocRef.id}.`,
+          gameId: newDocRef.id,
+        };
+      }
     } else {
-      console.log(`Error: Document with ID ${docRef.id} does not exist.`);
+      return {
+        success: false,
+        error: `no podemos crear un registro sin los datos necesarios`,
+      };
     }
   } catch (error) {
-    console.error(`Error saving data to Firestore: ${error}`);
+    // Manejo de errores
+    return {
+      success: false,
+      error: `Error al guardar datos: ${error.message}`,
+    };
   }
 };

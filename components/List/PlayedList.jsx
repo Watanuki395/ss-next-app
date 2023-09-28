@@ -69,12 +69,12 @@ const pedidosArray = [
   // ... Otros objetos de juego
 ];
 
-function ProductsList() {
+function PlayedList() {
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
       <List>
         {pedidosArray.map((item) => (
-          <Paper elevation={3}>
+          <Paper elevation={3} key={item.idProd}>
             <StyledListItem key={item.idProd}>
               <Grid container>
                 <StyledImage src="./rule4.png" alt="Imagen del juego" />
@@ -108,4 +108,4 @@ function ProductsList() {
   );
 }
 
-export default ProductsList;
+export default PlayedList;

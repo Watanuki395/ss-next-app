@@ -19,13 +19,6 @@ const HeroSection = () => {
             <Typography variant="subtitle1" gutterBottom>
               Descubre la emoción de intercambiar regalos de forma anónima.
             </Typography>
-            <Box mt={4}>
-              <Link href="/login">
-                <Button variant="contained" color="primary" size="large">
-                  Iniciar Sesión
-                </Button>
-              </Link>
-            </Box>
           </Container>
         </StyledBox>
       </BackgroundImage>
