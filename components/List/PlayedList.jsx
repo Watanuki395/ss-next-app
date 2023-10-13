@@ -1,109 +1,151 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
 import Paper from "@mui/material/Paper";
 import Chip from "@mui/material/Chip";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
 import Fab from "@mui/material/Fab";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import styled from "@emotion/styled"; // Importa styled de Emotion
+import AddIcon from "@mui/icons-material/Add";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import CustomModal from "../Modal/CustomModal";
 
-// Define un componente StyledListItem que aplica estilos personalizados
-const StyledListItem = styled(ListItem)`
-  border-radius: 10px; // Ajusta el valor según el nivel de redondeo deseado
-  margin-bottom: 1rem;
-  display: flex;
-  justify-content: space-between; // Separa las filas izquierda y derecha
-  align-items: center; // Centra verticalmente el contenido
-  padding: 1rem; // Añade espacio alrededor del ListItem
-  &:hover {
-    background-color: #2b2b2b; // Cambia el color de fondo al hacer hover
-  }
-`;
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+import Settings from "@mui/icons-material/Settings";
+import Logout from "@mui/icons-material/Logout";
 
-const StyledListSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: right;
-`;
+import { getAllDocsWhereUserId } from "../../app/firebase/api";
+import { useAuth } from "../../app/context/AuthContext";
 
-// Define un componente StyledImage para mostrar la imagen con bordes redondeados
-const StyledImage = styled("img")`
-  border-radius: 50px;
-  max-width: 100px;
-  max-height: 100px;
-  margin-right: 1rem;
-
-  @media screen and (max-width: 768px) {
-    align-self: center;
-    min-width: 80px;
-    max-height: 80px;
-  }
-  @media screen and (max-width: 468px) {
-    align-self: center;
-    min-width: 50px;
-    max-height: 50px;
-  }
-`;
-
-const pedidosArray = [
-  {
-    idProd: 123456,
-    ProdName: "un producto",
-    gameName: "Amigo Secreto Familiar",
-    participants: 10,
-    description: "Descripción del juego...",
-    status: "active",
-  },
-  {
-    idProd: 222222,
-    ProdName: "otro producto",
-    gameName: "Amigo Secreto en la Oficina",
-    participants: 8,
-    description: "Descripción del juego...",
-    status: "closed",
-  },
-  // ... Otros objetos de juego
-];
+import {
+  StyledListItem,
+  StyledListSection,
+  StyledImage,
+  StyledFabSection,
+} from "./styles";
 
 function PlayedList() {
+  const { user, loading, userInfo } = useAuth();
+  const [secretList, setSecretList] = useState();
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const [notify, setOpenDeleteModal] = useState({
+    isOpen: false,
+    type: "success",
+    title: "",
+    message: "",
+  });
+  const open = Boolean(anchorElUser);
+
+  const settings = [
+    {
+      label: "Ver más",
+      icon: <AccountCircleRoundedIcon />,
+      action: () => handleProfile(),
+    },
+    {
+      label: "Configuración",
+      icon: <Settings />,
+      action: () => handleAccount(),
+    },
+    {
+      label: "Eliminar partida",
+      icon: <Logout />,
+      action: () => handleLogout(),
+    },
+  ];
+
+  useEffect(() => {
+    const fetchGamesList = async () => {
+      if (!secretList) {
+        await getAllDocsWhereUserId("games", user.uid).then((response) => {
+          setSecretList(response.data);
+          console.log(response.data);
+        });
+      }
+    };
+
+    fetchGamesList();
+  }, []);
+
+  const handleGameMenuClick = (event) => {
+    setOpenDeleteModal({
+      isOpen: true,
+      type: "success",
+      title: "Registro Exitoso",
+      message: "¡Te has registrado con éxito!",
+    });
+  };
+
+  const handleDeleteBtnClick = (event) => {
+    setOpenDeleteModal({
+      isOpen: true,
+      title: "Cuidado!!!",
+      message: "¿Quieres borrar el juego?, esto sera permanente",
+    });
+  };
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
       <List>
-        {pedidosArray.map((item) => (
-          <Paper elevation={3} key={item.idProd}>
-            <StyledListItem key={item.idProd}>
-              <Grid container>
-                <StyledImage src="./rule4.png" alt="Imagen del juego" />
-                <StyledListSection>
-                  <Typography variant="h6">{item.gameName}</Typography>
-                  <Typography variant="body1">
-                    Participantes: {item.participants}
-                  </Typography>
-                  <Typography variant="body2">{item.description}</Typography>
-                  <Chip
-                    size="small"
-                    label={item.status === "active" ? "Activo" : "Finalizado"}
-                    color={item.status === "active" ? "success" : "default"}
-                    variant="filled"
-                    sx={{ width: "max-content" }}
-                  />
-                </StyledListSection>
-              </Grid>
-              <StyledListSection>
-                <Typography variant="body2">
-                  <Fab color="secondary" aria-label="edit" size="small">
-                    <MoreVertIcon />
-                  </Fab>
-                </Typography>
-              </StyledListSection>
-            </StyledListItem>
-          </Paper>
-        ))}
+        {secretList
+          ? secretList.map((item, i) => (
+              <Paper elevation={1} key={i}>
+                <StyledListItem key={i}>
+                  <Grid container>
+                    <StyledImage src="./rule4.png" alt="Imagen del juego" />
+                    <StyledListSection>
+                      <Typography variant="h6">{item.data.gameName}</Typography>
+                      <Typography variant="body1">
+                        Estimado: $ {item.data.gameAmount}
+                      </Typography>
+                      <Typography variant="body2">
+                        {item.data.gameDescription}
+                      </Typography>
+                      <Chip
+                        size="small"
+                        label={
+                          item.data.gameActive === true
+                            ? "Activo"
+                            : "Finalizado"
+                        }
+                        color={
+                          item.data.gameActive === true ? "success" : "default"
+                        }
+                        variant="filled"
+                        sx={{ width: "max-content" }}
+                      />
+                    </StyledListSection>
+                  </Grid>
+                  <StyledFabSection>
+                    <Fab
+                      id="gameOptionsBtn"
+                      color="primary"
+                      aria-label="edit"
+                      size="small"
+                      aria-controls={open ? "game-menu" : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={open ? "true" : undefined}
+                      onClick={handleGameMenuClick}
+                    >
+                      <AddIcon />
+                    </Fab>
+                    <Fab
+                      id="gameDeleteBtn"
+                      color="secondary"
+                      aria-label="delete"
+                      size="small"
+                      onClick={handleDeleteBtnClick}
+                    >
+                      <DeleteOutlineIcon />
+                    </Fab>
+                  </StyledFabSection>
+                </StyledListItem>
+              </Paper>
+            ))
+          : null}
       </List>
+      <CustomModal notify={notify} setOpen={setOpenDeleteModal} />
     </Box>
   );
 }

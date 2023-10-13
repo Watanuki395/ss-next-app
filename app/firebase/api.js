@@ -8,6 +8,10 @@ import {
   getDoc,
   getDocs,
   serverTimestamp,
+  query,
+  where,
+  orderBy,
+  limit,
 } from "firebase/firestore";
 import { db } from "../../firebase";
 
@@ -22,8 +26,42 @@ export const onGetLinks = (collectionName, callback) => {
   return unsub;
 };
 
-export const getUsers = (collectionName) =>
-  getDocs(collection(db, collectionName));
+export const getAllDocsWhereUserId = async (collectionName, id) => {
+  const q = query(collection(db, collectionName), where("createdBy", "==", id));
+
+  try {
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      console.log("No matching documents.");
+      return {
+        success: false,
+        message: "No se encontraron documentos",
+        data: [],
+      };
+    }
+
+    const documents = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      data: doc.data(),
+    }));
+
+    documents.sort((a, b) => b.data.createdAt - a.data.createdAt);
+
+    return {
+      success: true,
+      message: "Documentos encontrados exitosamente",
+      data: documents,
+    };
+  } catch (error) {
+    console.error("Error al buscar documentos:", error);
+    return {
+      success: false,
+      message: "Error al buscar documentos",
+      error: error.message,
+    };
+  }
+};
 
 export const deleteUser = (id, collectionName) =>
   deleteDoc(doc(db, collectionName, id));

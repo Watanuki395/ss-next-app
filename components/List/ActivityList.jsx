@@ -37,19 +37,21 @@ function ActivityList({ showImgs }) {
         <ListItem key={idPed}>
           <CardContentWrapper>
             <ListItemButton>
-              <Typography align="left">
-                El pedido #{idPed}
-                <span> fue enviado con exito</span>
-              </Typography>
-              <Typography size="small" color="grey">
-                {`${
-                  numDays === 0
-                    ? "Justo hoy"
-                    : numDays === 1
-                    ? "Un dia atras"
-                    : numDays + " dias atras"
-                }`}
-              </Typography>
+              <div>
+                <Typography align="left">
+                  El pedido #{idPed}
+                  <span> fue enviado con exito</span>
+                </Typography>
+                <Typography variant="body2" color="grey" align="right">
+                  {`${
+                    numDays === 0
+                      ? "Justo hoy"
+                      : numDays === 1
+                      ? "Un dia atras"
+                      : numDays + " dias atras"
+                  }`}
+                </Typography>
+              </div>
             </ListItemButton>
           </CardContentWrapper>
         </ListItem>

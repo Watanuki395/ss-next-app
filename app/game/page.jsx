@@ -90,6 +90,7 @@ function GamePage() {
         gameDescription: vals.gameDescription,
         dateOfGame: dayOfGifs,
         gameAmount: vals.gameAmount,
+        gameActive: true,
       };
       if (data && user.uid && collectionName) {
         setLoading(true);
@@ -168,21 +169,26 @@ function GamePage() {
               display={!created && !loading ? "block" : "none"}
               align={"center"}
             >
-              <Typography variant="h4" align={"center"}>
-                Creacion de juego nuevo
-              </Typography>
-
-              <Formik
-                initialValues={initialValues}
-                validationSchema={validationSchema}
-                onSubmit={async (values, { resetForm }) => {
-                  await handleSubmit(values);
-                  //resetForm();
-                }}
-              >
-                {({ errors, touched, isSubmitting, values, setFieldValue }) => (
-                  <Form>
-                    <StyledContainer>
+              <StyledContainer>
+                <Typography variant="h4" align={"center"} marginBottom={4}>
+                  Creacion de juego nuevo
+                </Typography>
+                <Formik
+                  initialValues={initialValues}
+                  validationSchema={validationSchema}
+                  onSubmit={async (values, { resetForm }) => {
+                    await handleSubmit(values);
+                    //resetForm();
+                  }}
+                >
+                  {({
+                    errors,
+                    touched,
+                    isSubmitting,
+                    values,
+                    setFieldValue,
+                  }) => (
+                    <Form>
                       <Grid container spacing={2}>
                         <Grid item xs={12}>
                           <Field
@@ -296,14 +302,14 @@ function GamePage() {
                       >
                         Crear
                       </Button>
-                    </StyledContainer>
-                  </Form>
-                )}
-              </Formik>
+                    </Form>
+                  )}
+                </Formik>
+              </StyledContainer>
             </Box>
           </Grid>
         ) : (
-          <Grid>
+          <Grid paddingBottom={"2rem"}>
             <Box
               display={created && !loading ? "block" : "none"}
               align={"center"}

@@ -26,5 +26,5 @@ StyledContainer.defaultProps = {
   initial: "hidden",
   animate: "visible",
   variants: containerVariants,
-  transition: { ease: "easeIn", duration: 1.5 },
+  transition: { ease: "easeIn", duration: 0.5 },
 };

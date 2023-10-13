@@ -11,6 +11,10 @@ const nextConfig = {
     BUCKET_URL: process.env.BUCKET_URL,
     QR_ROUTE: process.env.QR_ROUTE,
   },
+  experimental: {
+    serverActions: true,
+  },
+  reactStrictMode: true,
 };
 
 module.exports = nextConfig;
