@@ -6,7 +6,6 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Fab from "@mui/material/Fab";
-import Grid from "@mui/material/Grid";
 import AddIcon from "@mui/icons-material/Add";
 import SummaryChart from "@/components/SummaryChart/SummaryChart";
 import ActivityList from "@/components/List/ActivityList";
@@ -35,9 +34,7 @@ function Dashboard({ metrics }) {
         <Container>
           <DashboardHeader>
             <div>
-              <Typography variant={"h6"}>
-                Hola, <strong>{userInfo?.fname}</strong>
-              </Typography>
+              <Typography variant={"h6"}>Hola, {userInfo?.fname}</Typography>
               <Typography variant={"body2"}>
                 Aquí hay información que recopilamos para ti
               </Typography>

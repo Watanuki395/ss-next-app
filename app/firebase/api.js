@@ -63,9 +63,24 @@ export const getAllDocsWhereUserId = async (collectionName, id) => {
   }
 };
 
-export const deleteUser = (id, collectionName) =>
-  deleteDoc(doc(db, collectionName, id));
-
+export const deleteDocFromCollectionById = async (collectionName, id) => {
+  await deleteDoc(doc(db, collectionName, id))
+    .then((result) => {
+      return {
+        success: true,
+        message: "Documento borrado exitosamente",
+        data: result,
+      };
+    })
+    .catch((error) => {
+      console.error("Error al borrar el documento");
+      return {
+        success: false,
+        message: "Error al buscar documentos",
+        error: error.message,
+      };
+    });
+};
 export const getUser = (id, collectionName) =>
   getDoc(doc(db, collectionName, id));
 

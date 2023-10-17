@@ -10,40 +10,52 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
   bgcolor: "background.paper",
-  border: "2px solid #000",
+  border: "2px solid #565353b0",
   boxShadow: 24,
+  borderRadius: "10px",
   p: 4,
 };
 
 import { BtnWrapper } from "./style";
 
-export default function CustomModal({ notify, setOpen }) {
+export default function CustomModal({ modalAction, setOpen, onDelete }) {
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
-    setOpen({ ...notify, isOpen: false });
+    setOpen({ ...modalAction, isOpen: false });
+  };
+
+  const handleDelete = (idToDelete) => {
+    onDelete(idToDelete);
+
+    setOpen({ ...modalAction, isOpen: false });
   };
 
   return (
     <div>
       <Modal
-        open={notify.isOpen}
+        open={modalAction.isOpen}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            {notify.title}
+            {modalAction.title}
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            {notify.message}
+            {modalAction.message}
           </Typography>
           <BtnWrapper>
-            <Button variant="contained" color="error">
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => {
+                handleDelete(modalAction.id);
+              }}
+            >
               Borrar
             </Button>
             <Button variant="outlined" onClick={handleClose}>

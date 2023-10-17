@@ -16,11 +16,10 @@ export const StyledListItem = styled(ListItem)`
   border-radius: 10px;
   margin-bottom: 1rem;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   padding: 1rem;
   &:hover {
-    background-color: #2b2b2b;
+    /* background-color: #2b2b2b; */
   }
 `;
 
@@ -33,8 +32,14 @@ export const StyledListSection = styled.div`
 export const StyledFabSection = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
-  align-items: right;
+  gap: 1rem;
+  flex: auto;
+  justify-content: flex-end;
+  margin-left: 1rem;
+
+  @media screen and (max-width: 468px) {
+    flex-direction: column;
+  }
 `;
 
 export const StyledImage = styled("img")`

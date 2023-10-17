@@ -78,7 +78,6 @@ const theme = createTheme({
     MuiContainer: {
       styleOverrides: {
         root: {
-          color: "rgb(210,210,210)",
           width: "100%",
           minWidth: "90%",
         },
