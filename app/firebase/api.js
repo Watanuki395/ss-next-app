@@ -63,6 +63,48 @@ export const getAllDocsWhereUserId = async (collectionName, id) => {
   }
 };
 
+export const getDocWhereGameId = async (collectionName, id) => {
+  try {
+    const docSnapshot = await getDoc(doc(db, collectionName, id));
+    if (docSnapshot.exists()) {
+      return {
+        success: true,
+        data: docSnapshot.data(),
+      };
+    } else {
+      return {
+        success: false,
+        message: "No se encontró ningún juego con el ID proporcionado.",
+      };
+    }
+  } catch (error) {
+    console.error("Error al obtener el juego:", error);
+    return {
+      success: false,
+      message: "Error al obtener el juego",
+      error: error.message,
+    };
+  }
+};
+
+export const updateGameById = async (collectionName, gameId, updatedFields) => {
+  try {
+    const gameRef = doc(db, collectionName, gameId);
+    await updateDoc(gameRef, updatedFields);
+    return {
+      success: true,
+      message: "Juego actualizado exitosamente.",
+    };
+  } catch (error) {
+    console.error("Error al actualizar el juego:", error);
+    return {
+      success: false,
+      message: "Error al actualizar el juego",
+      error: error.message,
+    };
+  }
+};
+
 export const deleteDocFromCollectionById = async (collectionName, id) => {
   await deleteDoc(doc(db, collectionName, id))
     .then((result) => {

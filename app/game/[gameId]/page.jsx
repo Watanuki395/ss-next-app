@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
@@ -13,7 +13,8 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import InputAdornment from "@mui/material/InputAdornment";
 import Popover from "@mui/material/Popover";
-import QRCode from "react-qr-code";
+import CheckIcon from "@mui/icons-material/Check";
+import ToggleButton from "@mui/material/ToggleButton";
 import Link from "next/link";
 
 import dayjs from "dayjs";
@@ -24,23 +25,25 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers";
 
-import { useAuth } from "../context/AuthContext";
-import { saveData } from "../firebase/api";
+import { useAuth } from "../../context/AuthContext";
 import { Timestamp } from "firebase/firestore";
 
 import { CustumAlert } from "@/components/CustumAlert/CustumAlert";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 
-import { DashboardHeader, StyledContainer } from "./styles";
+import { DashboardHeader, StyledContainer } from "../styles";
+
+import { getDocWhereGameId, updateGameById } from "../../firebase/api";
 
 const today = dayjs();
 
-function GamePage() {
+function page({ params }) {
   const collectionName = "games";
 
   const { user, setLoading, loading } = useAuth();
 
+  const [gameInfo, setGameInfo] = useState();
   const [notify, setNotify] = useState({
     isOpen: false,
     title: "",
@@ -48,13 +51,22 @@ function GamePage() {
     type: "",
   });
 
-  const QRpath = process.env.QR_ROUTE;
-  const [QRvalue, setQRvalue] = useState(QRpath);
-  const [created, setCreated] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [selected, setSelected] = React.useState(false);
 
-  const btnId = copied ? "simple-popover" : undefined;
+  useEffect(() => {
+    let isCancelled = false;
+
+    getDocWhereGameId("games", params.gameId).then((response) => {
+      if (!isCancelled) {
+        setGameInfo(response.data);
+        setSelected(response.data.gameActive);
+      }
+    });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
 
   const validationSchema = Yup.object().shape({
     gameName: Yup.string()
@@ -76,10 +88,11 @@ function GamePage() {
   });
 
   const initialValues = {
-    gameName: "",
-    gameDescription: "",
-    dateOfGame: today,
-    gameAmount: 0,
+    gameName: gameInfo?.gameName,
+    gameDescription: gameInfo?.gameDescription,
+    dateOfGame: dayjs(gameInfo?.dateOfGame.toDate()),
+    gameAmount: gameInfo?.gameAmount,
+    gameActive: gameInfo?.gameActive,
   };
 
   const handleSubmit = async (vals) => {
@@ -90,16 +103,14 @@ function GamePage() {
         gameDescription: vals.gameDescription,
         dateOfGame: dayOfGifs,
         gameAmount: vals.gameAmount,
-        gameActive: null,
+        gameActive: selected,
       };
       if (data && user.uid && collectionName) {
         setLoading(true);
-        await saveData(collectionName, null, data, user.uid)
+        await updateGameById(collectionName, params.gameId, data)
           .then((result) => {
             if (result.success) {
               console.log(result);
-              setQRvalue(QRpath + result.gameId);
-              console.log(QRpath + result.gameId);
               setNotify({
                 isOpen: true,
                 type: "success",
@@ -115,7 +126,6 @@ function GamePage() {
               });
             }
             setLoading(false);
-            setCreated(true);
           })
           .catch((error) => {
             console.log(error);
@@ -133,45 +143,41 @@ function GamePage() {
       setLoading(false);
     }
   };
-
   return (
     <ProtectedRoute>
-      <Container>
-        <DashboardHeader>
-          <div>
-            <Box
-              sx={{
-                flexGrow: 1,
-                display: { xs: "flex", md: "none" },
-                padding: "1rem",
-              }}
-            >
-              <Link href={"/dashboard"}>
-                <Fab color="primary">
-                  <ArrowBackIcon />
-                </Fab>
-              </Link>
-            </Box>
-            <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-              <Link href={"/dashboard"}>
-                <Fab variant="extended" color="primary" aria-label="crear">
-                  <ArrowBackIcon sx={{ mr: 1 }} />
-                  Regresar
-                </Fab>
-              </Link>
-            </Box>
-          </div>
-          <div></div>
-        </DashboardHeader>
-        {!created && !loading ? (
+      {gameInfo ? (
+        <Container>
+          <DashboardHeader>
+            <div>
+              <Box
+                sx={{
+                  flexGrow: 1,
+                  display: { xs: "flex", md: "none" },
+                  padding: "1rem",
+                }}
+              >
+                <Link href={"/dashboard"}>
+                  <Fab color="primary">
+                    <ArrowBackIcon />
+                  </Fab>
+                </Link>
+              </Box>
+              <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+                <Link href={"/dashboard"}>
+                  <Fab variant="extended" color="primary" aria-label="crear">
+                    <ArrowBackIcon sx={{ mr: 1 }} />
+                    Regresar
+                  </Fab>
+                </Link>
+              </Box>
+            </div>
+            <div></div>
+          </DashboardHeader>
           <Grid>
-            <Box
-              display={!created && !loading ? "block" : "none"}
-              align={"center"}
-            >
+            <Box display={"block"} align={"center"}>
               <StyledContainer>
                 <Typography variant="h4" align={"center"} marginBottom={4}>
-                  Creacion de juego nuevo
+                  Edicion de juego
                 </Typography>
                 <Formik
                   initialValues={initialValues}
@@ -190,6 +196,22 @@ function GamePage() {
                   }) => (
                     <Form>
                       <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                          <ToggleButton
+                            value="check"
+                            name="gameActive"
+                            fullWidth
+                            selected={selected}
+                            color={"success"}
+                            onChange={() => {
+                              setSelected(!selected);
+                            }}
+                          >
+                            {selected
+                              ? "El juego esta: Activo"
+                              : "El juego esta: Finalizado"}
+                          </ToggleButton>
+                        </Grid>
                         <Grid item xs={12}>
                           <Field
                             name="gameName"
@@ -233,7 +255,6 @@ function GamePage() {
                             }
                           >
                             <DateTimePicker
-                              defaultValue={today}
                               label="Fecha del gran dia"
                               ampm={true}
                               disablePast
@@ -300,7 +321,7 @@ function GamePage() {
                         disabled={isSubmitting ? true : false}
                         sx={{ mt: 3, mb: 2 }}
                       >
-                        Crear
+                        Actualizar
                       </Button>
                     </Form>
                   )}
@@ -308,83 +329,11 @@ function GamePage() {
               </StyledContainer>
             </Box>
           </Grid>
-        ) : (
-          <Grid paddingBottom={"2rem"}>
-            <Box
-              display={created && !loading ? "block" : "none"}
-              align={"center"}
-            >
-              <StyledContainer>
-                <Typography variant="h2" align={"center"} m={2}>
-                  Tu juego se a creado
-                </Typography>
-                <Typography variant="body1" align={"center"} paddingBottom={6}>
-                  Tus amigos pueden escanear el codigo QR para participar del
-                  juego
-                </Typography>
-
-                <QRCode
-                  size={256}
-                  style={{
-                    height: "auto",
-                    maxWidth: "250px",
-                    width: "250px",
-                  }}
-                  value={QRvalue}
-                  bgColor={"rgb(20,20,20)"}
-                  fgColor={"#3f51b5"}
-                  viewBox={`0 0 256 256`}
-                />
-
-                <Typography
-                  variant="body1"
-                  align={"center"}
-                  marginBottom={4}
-                  marginTop={4}
-                >
-                  O puedes compartir el siguiente link...
-                </Typography>
-                <Button
-                  aria-describedby={btnId}
-                  components={"button"}
-                  variant="outlined"
-                  endIcon={copied ? <DoneAllIcon /> : <ContentCopyIcon />}
-                  color={copied ? "success" : "secondary"}
-                  onClick={(e) => {
-                    setCopied(true);
-                    setAnchorEl(e.currentTarget);
-                  }}
-                >
-                  {QRvalue}
-                </Button>
-                <Popover
-                  id={btnId}
-                  open={copied}
-                  anchorEl={anchorEl}
-                  onClose={() => {
-                    setCopied(false);
-                    setAnchorEl(null);
-                  }}
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "center",
-                  }}
-                  transformOrigin={{
-                    vertical: "bottom",
-                    horizontal: "left",
-                  }}
-                >
-                  <Typography sx={{ p: 2 }}>Copiado!.</Typography>
-                </Popover>
-              </StyledContainer>
-            </Box>
-          </Grid>
-        )}
-
-        <CustumAlert notify={notify} setNotify={setNotify} />
-      </Container>
+          <CustumAlert notify={notify} setNotify={setNotify} />
+        </Container>
+      ) : null}
     </ProtectedRoute>
   );
 }
 
-export default GamePage;
+export default page;

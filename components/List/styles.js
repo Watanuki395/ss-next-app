@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { motion } from "framer-motion";
 import ListItem from "@mui/material/ListItem";
 
 export const CardContentWrapper = styled.div`
@@ -59,3 +60,22 @@ export const StyledImage = styled("img")`
     max-height: 50px;
   }
 `;
+
+const containerVariants = {
+  hidden: { opacity: 0, y: -20 },
+  visible: { opacity: 1, y: 0 },
+};
+
+export const StyledContainer = styled(motion.div)({
+  display: "flex",
+  flexDirection: "column",
+  marginTop: "2rem",
+  width: "100%",
+});
+
+StyledContainer.defaultProps = {
+  initial: "hidden",
+  animate: "visible",
+  variants: containerVariants,
+  transition: { ease: "easeIn", duration: 0.5 },
+};

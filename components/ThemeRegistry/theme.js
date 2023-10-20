@@ -120,6 +120,17 @@ const theme = createTheme({
         },
       },
     },
+    MuiToggleButton: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#cd881c36",
+          "&:hover": {
+            backgroundColor: "#cd881c5c",
+            boxShadow: "0px 0px 5px #575d82",
+          },
+        },
+      },
+    },
   },
   bg2: "rgb(50,50,50)",
   bgAlpha: "rgba(0,0,0,.3)",

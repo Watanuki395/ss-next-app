@@ -86,13 +86,14 @@ function Dashboard({ metrics }) {
                   flexDirection: "column",
                 }}
               >
-                <Typography variant={"h6"}>Ultimos Juegos</Typography>
                 <PlayedList />
               </Box>
             </ContentGrid>
 
             <div>
-              <Typography variant={"h6"}>Ultimas Noticias</Typography>
+              <Typography variant={"h6"} paddingBottom={"2rem"}>
+                Ultimas Noticias
+              </Typography>
               <ActivityList></ActivityList>
             </div>
           </DashboardGrid>
