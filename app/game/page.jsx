@@ -82,15 +82,38 @@ function GamePage() {
     gameAmount: 0,
   };
 
+  function generateUniqueGameID(uid) {
+    // Genera un número de 6 dígitos basado en la fecha actual
+    const currentDate = new Date();
+    const randomDigits = currentDate.getMilliseconds().toString();
+
+    // creamos el uid
+    const uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+      /[xy]/g,
+      function (c) {
+        const r = (Math.random() * 16) | 0;
+        const v = c === "x" ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      }
+    );
+
+    // Combina los dígitos y las letras
+    const randomCode = uuid.substring(0, 6).toUpperCase() + "-" + randomDigits;
+
+    return randomCode;
+  }
+
   const handleSubmit = async (vals) => {
     try {
       const dayOfGifs = Timestamp.fromDate(vals.dateOfGame.toDate());
+      const gameID = generateUniqueGameID(user.uid);
       const data = {
         gameName: vals.gameName,
         gameDescription: vals.gameDescription,
         dateOfGame: dayOfGifs,
         gameAmount: vals.gameAmount,
         gameActive: null,
+        gameId: gameID,
       };
       if (data && user.uid && collectionName) {
         setLoading(true);

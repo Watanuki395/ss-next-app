@@ -22,7 +22,7 @@ const LoginPage = () => {
   const router = useRouter();
   const ERROR_CODE_WRONG_PASS = "auth/wrong-password";
   const ERROR_MSG_WRONG_PASS = `Usuario y/o contraseña no validos`;
-  const { login, loading, setLoading } = useAuth();
+  const { login } = useAuth();
 
   const initialValues = {
     email: "",
@@ -45,6 +45,8 @@ const LoginPage = () => {
     title: "",
     message: "",
   });
+
+  const [loading, setLoading] = useState();
 
   const handleSubmit = async (vals) => {
     try {

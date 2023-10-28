@@ -101,7 +101,7 @@ function PlayedList() {
                   <StyledListSection>
                     <Typography variant="h6">{item.data.gameName}</Typography>
                     <Typography variant="body1">
-                      Estimado: $ {item.data.gameAmount}
+                      ID: {item.data.gameId}
                     </Typography>
                     <Typography variant="body2">
                       {item.data.gameDescription}

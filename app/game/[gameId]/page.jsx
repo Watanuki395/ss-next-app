@@ -9,12 +9,9 @@ import Container from "@mui/material/Container";
 import Fab from "@mui/material/Fab";
 import Grid from "@mui/material/Grid";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import DoneAllIcon from "@mui/icons-material/DoneAll";
 import InputAdornment from "@mui/material/InputAdornment";
-import Popover from "@mui/material/Popover";
-import CheckIcon from "@mui/icons-material/Check";
 import ToggleButton from "@mui/material/ToggleButton";
+import LinearProgress from "@mui/material/LinearProgress";
 import Link from "next/link";
 
 import dayjs from "dayjs";
@@ -41,8 +38,9 @@ const today = dayjs();
 function page({ params }) {
   const collectionName = "games";
 
-  const { user, setLoading, loading } = useAuth();
+  const { user } = useAuth();
 
+  const [loading, setLoading] = useState(false);
   const [gameInfo, setGameInfo] = useState();
   const [notify, setNotify] = useState({
     isOpen: false,
@@ -90,7 +88,7 @@ function page({ params }) {
   const initialValues = {
     gameName: gameInfo?.gameName,
     gameDescription: gameInfo?.gameDescription,
-    dateOfGame: dayjs(gameInfo?.dateOfGame.toDate()),
+    dateOfGame: dayjs(gameInfo?.dateOfGame?.toDate()),
     gameAmount: gameInfo?.gameAmount,
     gameActive: gameInfo?.gameActive,
   };
@@ -114,18 +112,19 @@ function page({ params }) {
               setNotify({
                 isOpen: true,
                 type: "success",
-                title: "El juego se inicio con exito!!",
+                title: "El juego se actualizó con exito!!",
                 message: "El juego esta listo para comenzar",
               });
+              setLoading(false);
             } else {
               setNotify({
                 isOpen: true,
                 type: "error",
                 title: "Error",
-                message: "No se pudo crear el juego, intentalo mas tarde",
+                message: "No se pudo actualizar el juego, intentalo mas tarde",
               });
+              setLoading(false);
             }
-            setLoading(false);
           })
           .catch((error) => {
             console.log(error);
@@ -133,18 +132,18 @@ function page({ params }) {
               isOpen: true,
               type: "error",
               title: "Error",
-              message: "No se pudo crear el juego, intentalo mas tarde",
+              message: "No se pudo actualizar el juego, intentalo mas tarde",
             });
             setLoading(false);
           });
       }
     } catch (error) {
       console.log(error);
-      setLoading(false);
     }
   };
   return (
     <ProtectedRoute>
+      <Box sx={{ width: "100%" }}>{loading && <LinearProgress />}</Box>
       {gameInfo ? (
         <Container>
           <DashboardHeader>
@@ -207,9 +206,11 @@ function page({ params }) {
                               setSelected(!selected);
                             }}
                           >
-                            {selected
-                              ? "El juego esta: Activo"
-                              : "El juego esta: Finalizado"}
+                            {selected === true
+                              ? "El juego está activo"
+                              : selected === false
+                              ? "El juego está finalizado"
+                              : "El juego no ha iniciado"}
                           </ToggleButton>
                         </Grid>
                         <Grid item xs={12}>
