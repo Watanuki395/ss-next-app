@@ -5,7 +5,6 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import Avatar from "@mui/material/Avatar";
 import Grid from "@mui/material/Grid";
 import Fab from "@mui/material/Fab";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";

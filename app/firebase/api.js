@@ -10,8 +10,6 @@ import {
   serverTimestamp,
   query,
   where,
-  orderBy,
-  limit,
 } from "firebase/firestore";
 import { db } from "../../firebase";
 

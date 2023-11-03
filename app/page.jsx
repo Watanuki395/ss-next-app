@@ -1,5 +1,4 @@
 import * as React from "react";
-import Container from "@mui/material/Container";
 import HeroSection from "../components/Hero/Hero";
 
 const rules = [
