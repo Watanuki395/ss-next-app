@@ -30,7 +30,7 @@ const pedidosArray = [
   },
 ];
 
-function ActivityList({ showImgs }) {
+function ActivityList() {
   return (
     <List>
       {pedidosArray.map(({ idPed, numDays }) => (

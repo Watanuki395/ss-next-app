@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
@@ -23,34 +23,36 @@ import { DashboardHeader, StyledContainer } from "./styles";
 
 function ProfilePage() {
   const collectionName = "users";
-  const stringToColor = (string) => {
-    let hash = 0;
-    let i;
 
-    /* eslint-disable no-bitwise */
-    for (i = 0; i < string.length; i += 1) {
-      hash = string.charCodeAt(i) + ((hash << 5) - hash);
-    }
+  // const stringToColor = (string) => {
+  //   let hash = 0;
+  //   let i;
 
-    let color = "#";
+  //   /* eslint-disable no-bitwise */
+  //   for (i = 0; i < string.length; i += 1) {
+  //     hash = string.charCodeAt(i) + ((hash << 5) - hash);
+  //   }
 
-    for (i = 0; i < 3; i += 1) {
-      const value = (hash >> (i * 8)) & 0xff;
-      color += `00${value.toString(16)}`.slice(-2);
-    }
-    /* eslint-enable no-bitwise */
+  //   let color = "#";
 
-    return color;
-  };
+  //   for (i = 0; i < 3; i += 1) {
+  //     const value = (hash >> (i * 8)) & 0xff;
+  //     color += `00${value.toString(16)}`.slice(-2);
+  //   }
+  //   /* eslint-enable no-bitwise */
 
-  const stringAvatar = (name) => {
-    return {
-      sx: {
-        bgcolor: stringToColor(name),
-      },
-      children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
-    };
-  };
+  //   return color;
+  // };
+
+  // const stringAvatar = (name) => {
+  //   return {
+  //     sx: {
+  //       bgcolor: stringToColor(name),
+  //     },
+  //     children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
+  //   };
+  // };
+
   const { user, userInfo } = useAuth();
 
   const [loading, setLoading] = useState();
@@ -146,7 +148,7 @@ function ProfilePage() {
               <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}
-                onSubmit={async (values, { resetForm }) => {
+                onSubmit={async (values) => {
                   await handleSubmit(values);
                   //resetForm();
                 }}

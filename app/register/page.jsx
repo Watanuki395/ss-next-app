@@ -15,13 +15,7 @@ import { CustumAlert } from "@/components/CustumAlert/CustumAlert";
 import PasswordField from "@/components/PasswordField/PasswordField";
 import Link from "next/link";
 import Grid from "@mui/material/Grid";
-import {
-  StyledContainer,
-  StyledForm,
-  StyledButton,
-  StyledLinks,
-  StyledLink,
-} from "./styles";
+import { StyledContainer, StyledLinks, StyledLink } from "./styles";
 
 import { useAuth } from "../context/AuthContext";
 import * as Yup from "yup";
@@ -65,8 +59,6 @@ const RegisterPage = () => {
   `;
   const { signup, loading, setLoading } = useAuth();
 
-  const [error, setError] = useState(false);
-
   const [notify, setNotify] = useState({
     isOpen: false, // Indica si la alerta está abierta o cerrada
     type: "success", // Tipo de alerta: "success", "error", "info", etc.
@@ -75,7 +67,6 @@ const RegisterPage = () => {
   });
 
   const handleSubmit = async (vals) => {
-    setError(false);
     const data = {
       fname: vals.fname,
       lname: vals.lname,
@@ -85,7 +76,6 @@ const RegisterPage = () => {
         setLoading(true);
         await signup(vals.email, vals.password, data)
           .then(() => {
-            setError(false);
             router.push("/dashboard");
             setNotify({
               isOpen: true,
@@ -96,7 +86,6 @@ const RegisterPage = () => {
           })
           .catch((error) => {
             if ((error.code = ERROR_CODE_ACCOUNT_EXISTS)) {
-              setError(true);
               setNotify({
                 isOpen: true,
                 type: "error",

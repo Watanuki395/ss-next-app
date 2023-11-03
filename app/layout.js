@@ -1,11 +1,8 @@
-import { Inter } from "next/font/google";
 import { Suspense } from "react";
 import { AuthProvider } from "./context/AuthContext";
 import ThemeRegistry from "@/components/ThemeRegistry/ThemeRegistry";
 import Navbar from "../components/Navbar/Navbar";
 import Loading from "./loading";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "Secret Santa",

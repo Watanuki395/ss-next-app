@@ -25,7 +25,7 @@ import { useAuth } from "../../app/context/AuthContext";
 
 export default function Navbar() {
   const router = useRouter();
-  const { user, logout, loading, setLoading } = useAuth();
+  const { user, logout, loading } = useAuth();
 
   const settings = [
     {
