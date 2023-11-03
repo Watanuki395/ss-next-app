@@ -10,6 +10,16 @@ export const DashboardHeader = styled.div({
   justifyContent: "space-between",
 });
 
+export const ButtonsGrid = styled.div({
+  display: "flex",
+  columnGap: "1rem",
+
+  "@media screen and (max-width: 468px)": {
+    flexDirection: "column",
+    rowGap: "1rem",
+  },
+});
+
 export const DashboardGrid = styled.div`
   display: grid;
   grid-template-columns: 9fr 4fr;

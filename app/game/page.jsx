@@ -82,7 +82,7 @@ function GamePage() {
     gameAmount: 0,
   };
 
-  function generateUniqueGameID(uid) {
+  function generateUniqueGameID() {
     // Genera un número de 6 dígitos basado en la fecha actual
     const currentDate = new Date();
     const randomDigits = currentDate.getMilliseconds().toString();
@@ -114,6 +114,7 @@ function GamePage() {
         gameAmount: vals.gameAmount,
         gameActive: null,
         gameId: gameID,
+        players: [user.uid],
       };
       if (data && user.uid && collectionName) {
         setLoading(true);

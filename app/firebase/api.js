@@ -87,6 +87,51 @@ export const getDocWhereGameId = async (collectionName, id) => {
   }
 };
 
+// Función para buscar un juego por su gameId
+const findGameByGameId = async (gameId) => {
+  const gamesCollection = collection(db, "games");
+  const q = query(gamesCollection, where("gameId", "==", gameId));
+  const querySnapshot = await getDocs(q);
+
+  if (!querySnapshot.empty) {
+    // Devuelve el primer documento correspondiente encontrado
+    return querySnapshot.docs[0];
+  } else {
+    // Si no se encontró un juego con ese gameId, puedes manejarlo como desees
+    return null; // O lanzar una excepción, por ejemplo
+  }
+};
+
+export const addParticipantToGame = async (gameId, userId) => {
+  try {
+    const gameIdToSearch = gameId;
+    const gameDocument = await findGameByGameId(gameIdToSearch);
+
+    if (gameDocument.exists()) {
+      const gameDocRef = doc(db, "games", gameDocument.id);
+      // Obtenemos la lista actual de participantes
+      const currentParticipants = gameDocument.data().players || [];
+      // Verificamos si el usuario ya está en la lista
+      if (!currentParticipants.includes(userId)) {
+        // Si no está, lo agregamos
+        currentParticipants.push(userId);
+        console.log(gameDocument.id);
+        // Actualizamos el documento del juego con la nueva lista de participantes
+        await updateDoc(gameDocRef, { players: currentParticipants });
+        console.log(`Usuario ${userId} agregado al juego ${gameId}`);
+      } else {
+        console.log(`El usuario ${userId} ya está en el juego ${gameId}`);
+        // Puedes lanzar una excepción o devolver un mensaje de error
+        throw new Error(`El usuario ${userId} ya está jugando en este juego`);
+      }
+    } else {
+      console.log(`El juego con ID ${gameId} no existe`);
+    }
+  } catch (error) {
+    console.error("Error al agregar participante al juego:", error);
+  }
+};
+
 export const updateGameById = async (collectionName, gameId, updatedFields) => {
   try {
     const gameRef = doc(db, collectionName, gameId);
@@ -123,6 +168,7 @@ export const deleteDocFromCollectionById = async (collectionName, id) => {
       };
     });
 };
+
 export const getUser = (id, collectionName) =>
   getDoc(doc(db, collectionName, id));
 

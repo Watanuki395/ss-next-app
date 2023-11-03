@@ -1,9 +1,10 @@
 "use client";
-import * as React from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
+import TextField from "@mui/material/TextField";
 
 const style = {
   position: "absolute",
@@ -19,18 +20,33 @@ const style = {
 
 import { BtnWrapper } from "./style";
 
-export default function CustomModal({ modalAction, setOpen, onDelete }) {
+export default function CustomModal({
+  modalAction,
+  setOpen,
+  onDelete,
+  onSubmit,
+}) {
+  const [gameIdToSubmit, setGameIdToSubmit] = useState("");
+
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
     setOpen({ ...modalAction, isOpen: false });
+    setGameIdToSubmit("");
   };
 
   const handleDelete = (idToDelete) => {
     onDelete(idToDelete);
 
     setOpen({ ...modalAction, isOpen: false });
+  };
+
+  const handleSubmit = (idToSubmit) => {
+    onSubmit(idToSubmit);
+
+    setOpen({ ...modalAction, isOpen: false });
+    setGameIdToSubmit("");
   };
 
   return (
@@ -45,20 +61,54 @@ export default function CustomModal({ modalAction, setOpen, onDelete }) {
           <Typography id="modal-modal-title" variant="h6" component="h2">
             {modalAction.title}
           </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            {modalAction.message}
-          </Typography>
-          <BtnWrapper>
-            <Button
-              variant="contained"
-              color="error"
-              onClick={() => {
-                handleDelete(modalAction.id);
+          {modalAction?.message ? (
+            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+              {modalAction.message}
+            </Typography>
+          ) : null}
+          {onSubmit ? (
+            <TextField
+              id="outlined-basic"
+              label="Id del juego"
+              variant="outlined"
+              color="warning"
+              onChange={(e) => {
+                setGameIdToSubmit(e.target.value);
               }}
-            >
-              Borrar
-            </Button>
-            <Button variant="outlined" onClick={handleClose}>
+              sx={{ display: "flex", marginTop: "1.5rem" }}
+              inputProps={{
+                style: { textTransform: "uppercase" },
+                maxLength: 10,
+              }}
+            />
+          ) : null}
+
+          <BtnWrapper>
+            {onDelete ? (
+              <Button
+                variant="contained"
+                color="error"
+                onClick={() => {
+                  handleDelete(modalAction.id);
+                }}
+              >
+                Borrar
+              </Button>
+            ) : null}
+            {onSubmit ? (
+              <Button
+                variant="contained"
+                color="warning"
+                disabled={gameIdToSubmit.length < 10 ? true : false}
+                onClick={() => {
+                  handleSubmit(gameIdToSubmit);
+                }}
+              >
+                Unirme
+              </Button>
+            ) : null}
+
+            <Button variant="contained" color="primary" onClick={handleClose}>
               Cancelar
             </Button>
           </BtnWrapper>

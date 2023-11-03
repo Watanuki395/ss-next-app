@@ -37,6 +37,7 @@ function PlayedList() {
     title: "",
     message: "",
   });
+
   const [notify, setNotify] = useState({
     isOpen: false,
     title: "",
