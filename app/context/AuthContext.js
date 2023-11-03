@@ -1,6 +1,6 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -26,8 +26,6 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userInfo, setUserInfo] = useState(null);
-
-  const router = useRouter();
 
   const signup = async (email, password, data) => {
     await createUserWithEmailAndPassword(auth, email, password);
