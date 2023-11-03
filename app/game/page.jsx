@@ -59,13 +59,13 @@ function GamePage() {
   const validationSchema = Yup.object().shape({
     gameName: Yup.string()
       .required(
-        "Es necesario poner un nombre al juego para que lo puedas identificar"
+        "Es necesario poner un nombre al juego para que lo puedas identificar",
       )
       .max(255, `Máximo 255 caracteres`)
       .min(5, `Mínimo 5 caracteres`),
     gameDescription: Yup.string().max(255, `Máximo 255 caracteres`),
     dateOfGame: Yup.date().required(
-      "Es necesario establecer una fecha para el intercambio"
+      "Es necesario establecer una fecha para el intercambio",
     ),
     gameAmount: Yup.number()
       .positive()
@@ -94,7 +94,7 @@ function GamePage() {
         const r = (Math.random() * 16) | 0;
         const v = c === "x" ? r : (r & 0x3) | 0x8;
         return v.toString(16);
-      }
+      },
     );
 
     // Combina los dígitos y las letras

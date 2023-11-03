@@ -46,7 +46,7 @@ export default function Navbar() {
   if (user) {
     pages.push(
       { label: "about", name: "reglas" },
-      { label: "dashboard", name: "Inicio" }
+      { label: "dashboard", name: "Inicio" },
     );
   } else {
     pages.pop();

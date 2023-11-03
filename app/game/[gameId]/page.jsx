@@ -35,7 +35,7 @@ import { getDocWhereGameId, updateGameById } from "../../firebase/api";
 
 const today = dayjs();
 
-function page({ params }) {
+function GameEdit({ params }) {
   const collectionName = "games";
 
   const { user } = useAuth();
@@ -69,13 +69,13 @@ function page({ params }) {
   const validationSchema = Yup.object().shape({
     gameName: Yup.string()
       .required(
-        "Es necesario poner un nombre al juego para que lo puedas identificar"
+        "Es necesario poner un nombre al juego para que lo puedas identificar",
       )
       .max(255, `Máximo 255 caracteres`)
       .min(5, `Mínimo 5 caracteres`),
     gameDescription: Yup.string().max(255, `Máximo 255 caracteres`),
     dateOfGame: Yup.date().required(
-      "Es necesario establecer una fecha para el intercambio"
+      "Es necesario establecer una fecha para el intercambio",
     ),
     gameAmount: Yup.number()
       .positive()
@@ -337,4 +337,4 @@ function page({ params }) {
   );
 }
 
-export default page;
+export default GameEdit;
