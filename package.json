@@ -31,7 +31,8 @@
     "yup": "^1.2.0"
   },
   "devDependencies": {
-    "eslint": "^8.48.0",
+    "eslint": "^8.52.0",
+    "eslint-plugin-prettier": "^5.0.1",
     "prettier": "^3.0.3"
   }
 }
