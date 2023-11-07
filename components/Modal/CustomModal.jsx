@@ -99,7 +99,7 @@ export default function CustomModal({
               <Button
                 variant="contained"
                 color="warning"
-                disabled={gameIdToSubmit.length < 10 ? true : false}
+                disabled={gameIdToSubmit.length < 8 ? true : false}
                 onClick={() => {
                   handleSubmit(gameIdToSubmit);
                 }}

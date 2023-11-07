@@ -10,6 +10,7 @@ import {
   serverTimestamp,
   query,
   where,
+  arrayUnion,
 } from "firebase/firestore";
 import { db } from "../../firebase";
 
@@ -24,40 +25,43 @@ export const onGetLinks = (collectionName, callback) => {
   return unsub;
 };
 
-export const getAllDocsWhereUserId = async (collectionName, id) => {
-  const q = query(collection(db, collectionName), where("createdBy", "==", id));
+export const getAllDocsWhereUserId = async (userId) => {
+  const userDocRef = doc(db, "users", userId);
 
   try {
-    const querySnapshot = await getDocs(q);
+    const userDocSnapshot = await getDoc(userDocRef);
 
-    if (querySnapshot.empty) {
-      console.log("No matching documents.");
-      return {
-        success: false,
-        message: "No se encontraron documentos",
-        data: [],
-      };
+    if (userDocSnapshot.exists()) {
+      const userData = userDocSnapshot.data();
+      const gamesArray = userData.games || [];
+
+      if (gamesArray.length > 0) {
+        // Crea un array de promesas para obtener los juegos por sus IDs
+        const gamesPromises = gamesArray.map(async (gameId) => {
+          const gameDocRef = doc(db, "games", gameId);
+          const gameDocSnapshot = await getDoc(gameDocRef);
+
+          if (gameDocSnapshot.exists()) {
+            const gameData = gameDocSnapshot.data();
+            return { id: gameDocSnapshot.id, ...gameData };
+          }
+
+          return null; // Si el juego no existe
+        });
+        const gamesData = await Promise.all(gamesPromises);
+
+        return gamesData;
+      } else {
+        console.log("El usuario no tiene juegos asociados.");
+        return [];
+      }
+    } else {
+      console.log("El usuario no existe.");
+      return [];
     }
-
-    const documents = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      data: doc.data(),
-    }));
-
-    documents.sort((a, b) => b.data.createdAt - a.data.createdAt);
-
-    return {
-      success: true,
-      message: "Documentos encontrados exitosamente",
-      data: documents,
-    };
   } catch (error) {
-    console.error("Error al buscar documentos:", error);
-    return {
-      success: false,
-      message: "Error al buscar documentos",
-      error: error.message,
-    };
+    console.error("Error al obtener los juegos del usuario:", error);
+    return [];
   }
 };
 
@@ -116,17 +120,31 @@ export const addParticipantToGame = async (gameId, userId) => {
         console.log(gameDocument.id);
         // Actualizamos el documento del juego con la nueva lista de participantes
         await updateDoc(gameDocRef, { players: currentParticipants });
-        console.log(`Usuario ${userId} agregado al juego ${gameId}`);
+        await updateUserGames(gameDocument.id, userId);
+        return {
+          success: true,
+          message: `Usuario ${userId} agregado al juego ${gameId}`,
+        };
       } else {
-        console.log(`El usuario ${userId} ya está en el juego ${gameId}`);
-        // Puedes lanzar una excepción o devolver un mensaje de error
-        throw new Error(`El usuario ${userId} ya está jugando en este juego`);
+        //throw new Error(`El usuario ${userId} ya está jugando en este juego`);
+        return {
+          success: false,
+          message: `El usuario ${userId} ya está jugando en este juego`,
+        };
       }
     } else {
       console.log(`El juego con ID ${gameId} no existe`);
+      return {
+        success: false,
+        message: `El juego con ID ${gameId} no existe`,
+      };
     }
   } catch (error) {
-    console.error("Error al agregar participante al juego:", error);
+    return {
+      success: false,
+      message: `El usuario ${userId} ya está jugando en este juego`,
+      error: error.message,
+    };
   }
 };
 
@@ -148,29 +166,47 @@ export const updateGameById = async (collectionName, gameId, updatedFields) => {
   }
 };
 
-export const deleteDocFromCollectionById = async (collectionName, id) => {
-  await deleteDoc(doc(db, collectionName, id))
-    .then((result) => {
+export const deleteGameWithUserUpdates = async (userId, gameId) => {
+  const userRef = doc(db, "users", userId);
+  const userDoc = await getDoc(userRef);
+
+  if (userDoc.exists()) {
+    // Verifica si el juego está en la lista de juegos del usuario y, si es así, elimínalo.
+    const userData = userDoc.data();
+    if (userData.games && userData.games.includes(gameId)) {
+      const updatedGames = userData.games.filter((id) => id !== gameId);
+
+      // Actualiza el documento del usuario para reflejar la eliminación del juego.
+      await updateDoc(userRef, {
+        games: updatedGames,
+      });
+
+      // Ahora puedes eliminar el juego de la colección de juegos.
+      const gameRef = doc(db, "games", gameId);
+      await deleteDoc(gameRef);
+
       return {
         success: true,
-        message: "Documento borrado exitosamente",
-        data: result,
+        message: "Juego eliminado y usuario actualizado correctamente.",
       };
-    })
-    .catch((error) => {
-      console.error("Error al borrar el documento");
+    } else {
       return {
         success: false,
-        message: "Error al buscar documentos",
-        error: error.message,
+        message: "El juego no está en la lista de juegos del usuario.",
       };
-    });
+    }
+  } else {
+    return {
+      success: false,
+      message: "No se encontró al usuario con el ID proporcionado.",
+    };
+  }
 };
 
 export const getUser = (id, collectionName) =>
   getDoc(doc(db, collectionName, id));
 
-export const saveData = async (collectionName, documentId, data, user) => {
+export const saveGameData = async (collectionName, documentId, data, user) => {
   const collectionRef = collection(db, collectionName);
 
   try {
@@ -216,6 +252,46 @@ export const saveData = async (collectionName, documentId, data, user) => {
     return {
       success: false,
       error: `Error al guardar datos: ${error.message}`,
+    };
+  }
+};
+
+export const updateUserGames = async (gameId, userId) => {
+  const userDocRef = doc(db, "users", userId);
+
+  try {
+    const userDocSnapshot = await getDoc(userDocRef);
+    if (userDocSnapshot.exists()) {
+      const userData = userDocSnapshot.data();
+      const gamesArray = userData.games || [];
+
+      if (!gamesArray.includes(gameId)) {
+        // Agrega el nuevo ID de juego al array `games` si no está presente
+        await updateDoc(userDocRef, {
+          games: arrayUnion(gameId),
+        });
+        return {
+          success: true,
+          message: "Juego agregado exitosamente al usuario.",
+        };
+      } else {
+        return {
+          success: false,
+          message: "El juego ya está asociado al usuario.",
+        };
+      }
+    } else {
+      return {
+        success: false,
+        message: "El usuario no existe.",
+      };
+    }
+  } catch (error) {
+    console.error("Error al actualizar el juego del usuario:", error);
+    return {
+      success: false,
+      message: "Error al actualizar el juego del usuario:",
+      error,
     };
   }
 };

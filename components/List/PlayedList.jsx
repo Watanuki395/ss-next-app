@@ -13,7 +13,7 @@ import { CustumAlert } from "@/components/CustumAlert/CustumAlert";
 
 import {
   getAllDocsWhereUserId,
-  deleteDocFromCollectionById,
+  deleteGameWithUserUpdates,
 } from "../../app/firebase/api";
 
 import { useAuth } from "../../app/context/AuthContext";
@@ -48,10 +48,10 @@ function PlayedList() {
   useEffect(() => {
     let isCancelled = false;
 
-    getAllDocsWhereUserId("games", user.uid).then((response) => {
+    getAllDocsWhereUserId(user.uid).then((response) => {
       if (!isCancelled) {
-        setSecretList(response.data);
-        console.log(response.data);
+        setSecretList(response);
+        console.log(response);
       }
     });
 
@@ -75,15 +75,20 @@ function PlayedList() {
 
   const handleDeleteInModal = async (idToDelete) => {
     try {
-      await deleteDocFromCollectionById("games", idToDelete);
-      console.log("id borrado: " + idToDelete);
-      const updatedList = secretList.filter((item) => item.id !== idToDelete);
-      setSecretList(updatedList);
-      setNotify({
-        isOpen: true,
-        type: "success",
-        title: "El juego elimino exito!!",
-        message: "El juego fue eliminado de la lista",
+      await deleteGameWithUserUpdates(user.uid, idToDelete).then((response) => {
+        if (response.success) {
+          setNotify({
+            isOpen: true,
+            type: "success",
+            title: "El juego elimino exito!!",
+            message: "El juego fue eliminado de la lista",
+          });
+          console.log("id borrado: " + idToDelete);
+          const updatedList = secretList.filter(
+            (item) => item.id !== idToDelete
+          );
+          setSecretList(updatedList);
+        }
       });
     } catch (error) {
       console.error("Error al borrar el elemento: ", error);
@@ -93,33 +98,37 @@ function PlayedList() {
     <>
       {secretList && secretList.length ? (
         <StyledContainer>
-          <Typography variant={"h6"}>Ultimos Juegos</Typography>
+          <Typography variant={"h6"}>
+            Juegos en los que estoy participando
+          </Typography>
           <List>
             {secretList.map((item, i) => (
               <Paper elevation={1} key={i}>
                 <StyledListItem key={i}>
                   <StyledImage src="./rule4.png" alt="Imagen del juego" />
                   <StyledListSection>
-                    <Typography variant="h6">{item.data.gameName}</Typography>
+                    <Typography variant="h6">{item.gameName}</Typography>
+                    <Typography variant="body1">ID: {item.gameId}</Typography>
                     <Typography variant="body1">
-                      ID: {item.data.gameId}
+                      Juego:
+                      {item.createdBy === user.uid ? "Propio" : "Participante"}
                     </Typography>
                     <Typography variant="body2">
-                      {item.data.gameDescription}
+                      {item.gameDescription}
                     </Typography>
                     <Chip
                       size="small"
                       label={
-                        item.data.gameActive === true
+                        item.gameActive === true
                           ? "Activo"
-                          : item.data.gameActive === false
+                          : item.gameActive === false
                           ? "Finalizado"
                           : "No inciado"
                       }
                       color={
-                        item.data.gameActive === true
+                        item.gameActive === true
                           ? "success"
-                          : item.data.gameActive === false
+                          : item.gameActive === false
                           ? "default"
                           : "warning"
                       }
@@ -164,9 +173,9 @@ function PlayedList() {
             setOpen={setOpenDeleteModal}
             onDelete={handleDeleteInModal}
           />
-          <CustumAlert notify={notify} setNotify={setNotify} />
         </StyledContainer>
       ) : null}
+      <CustumAlert notify={notify} setNotify={setNotify} />
     </>
   );
 }

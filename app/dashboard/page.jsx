@@ -51,7 +51,9 @@ function Dashboard() {
 
   const handleSubmitModal = async (gameIdToJoin) => {
     try {
-      await addParticipantToGame(gameIdToJoin.toUpperCase(), user.uid);
+      await addParticipantToGame(gameIdToJoin.toUpperCase(), user.uid).then(
+        (result) => {}
+      );
       console.log("EXITO");
     } catch (error) {
       console.log(error);

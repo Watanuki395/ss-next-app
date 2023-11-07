@@ -26,10 +26,15 @@ import { useAuth } from "../../context/AuthContext";
 import { Timestamp } from "firebase/firestore";
 
 import { CustumAlert } from "@/components/CustumAlert/CustumAlert";
+import ActivityList from "@/components/List/ActivityList";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 
-import { DashboardHeader, StyledContainer } from "../styles";
+import {
+  DashboardHeader,
+  StyledContainer,
+  StyledGridContainer,
+} from "../styles";
 
 import { getDocWhereGameId, updateGameById } from "../../firebase/api";
 
@@ -56,8 +61,8 @@ function GameEdit({ params }) {
 
     getDocWhereGameId("games", params.gameId).then((response) => {
       if (!isCancelled) {
-        setGameInfo(response.data);
-        setSelected(response.data.gameActive);
+        setGameInfo(response);
+        setSelected(response.gameActive);
       }
     });
 
@@ -69,13 +74,13 @@ function GameEdit({ params }) {
   const validationSchema = Yup.object().shape({
     gameName: Yup.string()
       .required(
-        "Es necesario poner un nombre al juego para que lo puedas identificar",
+        "Es necesario poner un nombre al juego para que lo puedas identificar"
       )
       .max(255, `Máximo 255 caracteres`)
       .min(5, `Mínimo 5 caracteres`),
     gameDescription: Yup.string().max(255, `Máximo 255 caracteres`),
     dateOfGame: Yup.date().required(
-      "Es necesario establecer una fecha para el intercambio",
+      "Es necesario establecer una fecha para el intercambio"
     ),
     gameAmount: Yup.number()
       .positive()
@@ -86,11 +91,11 @@ function GameEdit({ params }) {
   });
 
   const initialValues = {
-    gameName: gameInfo?.gameName,
-    gameDescription: gameInfo?.gameDescription,
-    dateOfGame: dayjs(gameInfo?.dateOfGame?.toDate()),
-    gameAmount: gameInfo?.gameAmount,
-    gameActive: gameInfo?.gameActive,
+    gameName: gameInfo?.data?.gameName,
+    gameDescription: gameInfo?.data.gameDescription,
+    dateOfGame: dayjs(gameInfo?.data.dateOfGame?.toDate()),
+    gameAmount: gameInfo?.data.gameAmount,
+    gameActive: gameInfo?.data.gameActive,
   };
 
   const handleSubmit = async (vals) => {
@@ -101,7 +106,7 @@ function GameEdit({ params }) {
         gameDescription: vals.gameDescription,
         dateOfGame: dayOfGifs,
         gameAmount: vals.gameAmount,
-        gameActive: selected,
+        gameActive: selected ? selected : "undefined",
       };
       if (data && user.uid && collectionName) {
         setLoading(true);
@@ -172,7 +177,7 @@ function GameEdit({ params }) {
             </div>
             <div></div>
           </DashboardHeader>
-          <Grid>
+          <StyledGridContainer>
             <Box display={"block"} align={"center"}>
               <StyledContainer>
                 <Typography variant="h4" align={"center"} marginBottom={4}>
@@ -181,9 +186,8 @@ function GameEdit({ params }) {
                 <Formik
                   initialValues={initialValues}
                   validationSchema={validationSchema}
-                  onSubmit={async (values, { resetForm }) => {
+                  onSubmit={async (values) => {
                     await handleSubmit(values);
-                    //resetForm();
                   }}
                 >
                   {({
@@ -202,14 +206,19 @@ function GameEdit({ params }) {
                             fullWidth
                             selected={selected}
                             color={"success"}
+                            disabled={
+                              gameInfo.data.createdBy !== user.uid
+                                ? true
+                                : false
+                            }
                             onChange={() => {
                               setSelected(!selected);
                             }}
                           >
                             {selected === true
-                              ? "El juego está activo"
+                              ? "Activar"
                               : selected === false
-                              ? "El juego está finalizado"
+                              ? "Finalizar"
                               : "El juego no ha iniciado"}
                           </ToggleButton>
                         </Grid>
@@ -226,7 +235,11 @@ function GameEdit({ params }) {
                             helperText={
                               Boolean(touched.gameName) && errors.gameName
                             }
-                            disabled={isSubmitting}
+                            disabled={
+                              gameInfo.data.createdBy !== user.uid
+                                ? true
+                                : false
+                            }
                           />
                         </Grid>
                         <Grid item xs={12}>
@@ -243,7 +256,11 @@ function GameEdit({ params }) {
                               Boolean(touched.gameDescription) &&
                               errors.gameDescription
                             }
-                            disabled={isSubmitting}
+                            disabled={
+                              gameInfo.data.createdBy !== user.uid
+                                ? true
+                                : false
+                            }
                           />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -259,6 +276,11 @@ function GameEdit({ params }) {
                               label="Fecha del gran dia"
                               ampm={true}
                               disablePast
+                              disabled={
+                                gameInfo.data.createdBy !== user.uid
+                                  ? true
+                                  : false
+                              }
                               viewRenderers={{
                                 hours: renderTimeViewClock,
                                 minutes: renderTimeViewClock,
@@ -309,7 +331,11 @@ function GameEdit({ params }) {
                             helperText={
                               Boolean(touched.gameAmount) && errors.gameAmount
                             }
-                            disabled={isSubmitting}
+                            disabled={
+                              gameInfo.data.createdBy !== user.uid
+                                ? true
+                                : false
+                            }
                           />
                         </Grid>
                       </Grid>
@@ -319,7 +345,9 @@ function GameEdit({ params }) {
                         fullWidth
                         size="large"
                         type="submit"
-                        disabled={isSubmitting ? true : false}
+                        disabled={
+                          gameInfo.data.createdBy !== user.uid ? true : false
+                        }
                         sx={{ mt: 3, mb: 2 }}
                       >
                         Actualizar
@@ -329,7 +357,15 @@ function GameEdit({ params }) {
                 </Formik>
               </StyledContainer>
             </Box>
-          </Grid>
+            <Box display={"block"} align={"center"}>
+              <StyledContainer>
+                <Typography variant="h6" align={"center"} marginBottom={4}>
+                  Participantes
+                </Typography>
+                <ActivityList></ActivityList>
+              </StyledContainer>
+            </Box>
+          </StyledGridContainer>
           <CustumAlert notify={notify} setNotify={setNotify} />
         </Container>
       ) : null}

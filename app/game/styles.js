@@ -28,3 +28,17 @@ StyledContainer.defaultProps = {
   variants: containerVariants,
   transition: { ease: "easeIn", duration: 0.5 },
 };
+
+export const StyledGridContainer = styled(motion.div)({
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+  alignContent: "center",
+  justifyContent: "center",
+  columnGap: "2rem",
+
+  "@media screen and (max-width: 768px)": {
+    flexDirection: "column",
+    rowGap: "1rem",
+  },
+});

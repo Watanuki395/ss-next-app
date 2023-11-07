@@ -4,7 +4,7 @@
 const nextConfig = {
   eslint: {
     // Ignorar los errores de ESLint en el desarrollo
-    ignoreDuringBuilds: true
+    ignoreDuringBuilds: true,
   },
   env: {
     API_URL: process.env.API_URL,
@@ -16,7 +16,7 @@ const nextConfig = {
     APP_ID: process.env.APP_ID,
     BUCKET_URL: process.env.BUCKET_URL,
     QR_ROUTE: process.env.QR_ROUTE,
-    BUILD_ID: '12131234343423454545'
+    BUILD_ID: "12131234343423454545",
   },
   reactStrictMode: true,
 };

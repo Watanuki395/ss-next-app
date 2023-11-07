@@ -25,7 +25,7 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers";
 
 import { useAuth } from "../context/AuthContext";
-import { saveData } from "../firebase/api";
+import { saveGameData, updateUserGames } from "../firebase/api";
 import { Timestamp } from "firebase/firestore";
 
 import { CustumAlert } from "@/components/CustumAlert/CustumAlert";
@@ -118,10 +118,17 @@ function GamePage() {
       };
       if (data && user.uid && collectionName) {
         setLoading(true);
-        await saveData(collectionName, null, data, user.uid)
-          .then((result) => {
+        await saveGameData(collectionName, null, data, user.uid)
+          .then( async(result) => {
             if (result.success) {
               console.log(result);
+              await updateUserGames(result.gameId, user.uid).then((updateResult)=>{
+                if(updateResult.success){
+                  console.log(updateResult.message)
+                }else {
+                  console.log(updateResult.message)
+                }
+              })
               setQRvalue(QRpath + result.gameId);
               console.log(QRpath + result.gameId);
               setNotify({

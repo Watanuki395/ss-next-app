@@ -70,6 +70,8 @@ const RegisterPage = () => {
     const data = {
       fname: vals.fname,
       lname: vals.lname,
+      email: vals.email,
+      games:[]
     };
     try {
       if (vals.email && vals.password) {

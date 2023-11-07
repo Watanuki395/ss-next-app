@@ -93,7 +93,7 @@ function ProfilePage() {
         setNotify({
           isOpen: true,
           type: "success",
-          title: "Actualizacion con Exito",
+          title: "Actualización con Exito",
           message: "Los datos se actualizaron correctamente",
         });
       });
@@ -102,7 +102,7 @@ function ProfilePage() {
       setNotify({
         isOpen: true,
         type: "error",
-        title: "Actualizacion con Fallida",
+        title: "Actualización con Fallida",
         message: "Los NO  datos se actualizaron correctamente",
       });
     }
