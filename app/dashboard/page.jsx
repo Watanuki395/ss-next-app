@@ -1,9 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import LinearProgress from "@mui/material/LinearProgress";
 import Container from "@mui/material/Container";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
@@ -13,6 +14,7 @@ import ActivityList from "@/components/List/ActivityList";
 import PlayedList from "@/components/List/PlayedList";
 import CustomModal from "@/components/Modal/CustomModal";
 import { useAuth } from "../context/AuthContext";
+import { CustumAlert } from "@/components/CustumAlert/CustumAlert";
 
 import {
   StyledContainer,
@@ -23,11 +25,20 @@ import {
   ButtonsGrid,
 } from "./styles";
 
-import { addParticipantToGame } from "../firebase/api";
+import { addParticipantToGame, getAllDocsWhereUserId } from "../firebase/api";
 
 function Dashboard() {
   const router = useRouter();
   const { user, userInfo } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [secretList, setSecretList] = useState([]);
+
+  const [notify, setNotify] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "",
+  });
 
   const [modalAction, setOpenDeleteModal] = useState({
     id: "",
@@ -36,6 +47,22 @@ function Dashboard() {
     title: "",
     message: "",
   });
+
+  useEffect(() => {
+    let isCancelled = false;
+    if (user && user.uid) {
+      getAllDocsWhereUserId(user.uid).then((response) => {
+        if (!isCancelled) {
+          setSecretList(response);
+          console.log(response);
+        }
+      });
+    }
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [user]);
 
   const handleCrearClick = () => {
     router.push("/game");
@@ -51,18 +78,39 @@ function Dashboard() {
 
   const handleSubmitModal = async (gameIdToJoin) => {
     try {
-      await addParticipantToGame(gameIdToJoin.toUpperCase(), user.uid).then(
-        (result) => {}
-      );
-      console.log("EXITO");
+      setLoading(true);
+      await addParticipantToGame(
+        gameIdToJoin.toUpperCase(),
+        user.uid,
+        userInfo.fname
+      ).then((result) => {
+        if (result.success) {
+          setLoading(false);
+          setNotify({
+            isOpen: true,
+            type: "success",
+            title: "Se agrego correctamente al juego",
+            message: result.message,
+          });
+        } else {
+          setLoading(false);
+          setNotify({
+            isOpen: true,
+            type: "warning",
+            title: "Algo inesperado paso!",
+            message: result.message,
+          });
+        }
+      });
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
-    console.log(gameIdToJoin.toUpperCase());
   };
 
   return (
     <ProtectedRoute>
+      <Box sx={{ width: "100%" }}>{loading && <LinearProgress />}</Box>
       <StyledContainer>
         <Container>
           <DashboardHeader>
@@ -139,7 +187,7 @@ function Dashboard() {
                   flexDirection: "column",
                 }}
               >
-                <PlayedList />
+                <PlayedList gameList={secretList} />
               </Box>
             </ContentGrid>
 
@@ -156,6 +204,7 @@ function Dashboard() {
           setOpen={setOpenDeleteModal}
           onSubmit={handleSubmitModal}
         />
+        <CustumAlert notify={notify} setNotify={setNotify} />
       </StyledContainer>
     </ProtectedRoute>
   );

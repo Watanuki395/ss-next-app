@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import List from "@mui/material/List";
 import Paper from "@mui/material/Paper";
@@ -7,14 +7,16 @@ import Chip from "@mui/material/Chip";
 import Typography from "@mui/material/Typography";
 import Fab from "@mui/material/Fab";
 import EditIcon from "@mui/icons-material/Edit";
+import LinearProgress from "@mui/material/LinearProgress";
+import Skeleton from "@mui/material/Skeleton";
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CustomModal from "../Modal/CustomModal";
 import { CustumAlert } from "@/components/CustumAlert/CustumAlert";
 
-import {
-  getAllDocsWhereUserId,
-  deleteGameWithUserUpdates,
-} from "../../app/firebase/api";
+import { deleteGameWithUserUpdates } from "../../app/firebase/api";
 
 import { useAuth } from "../../app/context/AuthContext";
 
@@ -26,10 +28,23 @@ import {
   StyledContainer,
 } from "./styles";
 
-function PlayedList() {
+function PlayedList({ gameList }) {
   const router = useRouter();
   const { user } = useAuth();
-  const [secretList, setSecretList] = useState();
+  const [loading, setLoading] = useState(false);
+  const [secretList, setSecretList] = useState([]);
+
+  useEffect(() => {
+    let isCancelled = false;
+    if (!isCancelled) {
+      setSecretList(gameList);
+    }
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [gameList]);
+
   const [modalAction, setOpenDeleteModal] = useState({
     id: "",
     isOpen: false,
@@ -44,21 +59,6 @@ function PlayedList() {
     message: "",
     type: "",
   });
-
-  useEffect(() => {
-    let isCancelled = false;
-
-    getAllDocsWhereUserId(user.uid).then((response) => {
-      if (!isCancelled) {
-        setSecretList(response);
-        console.log(response);
-      }
-    });
-
-    return () => {
-      isCancelled = true;
-    };
-  }, []);
 
   const handleGameMenuClick = (id) => {
     router.push(`/game/${id}`);
@@ -75,15 +75,17 @@ function PlayedList() {
 
   const handleDeleteInModal = async (idToDelete) => {
     try {
+      setLoading(true);
       await deleteGameWithUserUpdates(user.uid, idToDelete).then((response) => {
         if (response.success) {
+          setLoading(false);
           setNotify({
             isOpen: true,
             type: "success",
             title: "El juego elimino exito!!",
             message: "El juego fue eliminado de la lista",
           });
-          console.log("id borrado: " + idToDelete);
+          //console.log("id borrado: " + idToDelete);
           const updatedList = secretList.filter(
             (item) => item.id !== idToDelete
           );
@@ -92,12 +94,15 @@ function PlayedList() {
       });
     } catch (error) {
       console.error("Error al borrar el elemento: ", error);
+      setLoading(false);
     }
   };
+
   return (
     <>
       {secretList && secretList.length ? (
         <StyledContainer>
+          <Box sx={{ width: "100%" }}>{loading && <LinearProgress />}</Box>
           <Typography variant={"h6"}>
             Juegos en los que estoy participando
           </Typography>
@@ -107,28 +112,28 @@ function PlayedList() {
                 <StyledListItem key={i}>
                   <StyledImage src="./rule4.png" alt="Imagen del juego" />
                   <StyledListSection>
-                    <Typography variant="h6">{item.gameName}</Typography>
-                    <Typography variant="body1">ID: {item.gameId}</Typography>
+                    <Typography variant="h6">{item?.gameName}</Typography>
+                    <Typography variant="body1">ID: {item?.gameId}</Typography>
                     <Typography variant="body1">
                       Juego:
-                      {item.createdBy === user.uid ? "Propio" : "Participante"}
+                      {item?.createdBy === user.uid ? "Propio" : "Participante"}
                     </Typography>
                     <Typography variant="body2">
-                      {item.gameDescription}
+                      {item?.gameDescription}
                     </Typography>
                     <Chip
                       size="small"
                       label={
-                        item.gameActive === true
+                        item?.gameActive === true
                           ? "Activo"
-                          : item.gameActive === false
+                          : item?.gameActive === false
                           ? "Finalizado"
                           : "No inciado"
                       }
                       color={
-                        item.gameActive === true
+                        item?.gameActive === true
                           ? "success"
-                          : item.gameActive === false
+                          : item?.gameActive === false
                           ? "default"
                           : "warning"
                       }
@@ -139,28 +144,37 @@ function PlayedList() {
                   </StyledListSection>
 
                   <StyledFabSection>
-                    <Fab
-                      id="gameDeleteBtn"
-                      key={item.id}
-                      color="error"
-                      aria-label="delete"
-                      size="small"
-                      onClick={() => {
-                        handleDeleteBtnClick(item.id);
-                      }}
-                    >
-                      <DeleteOutlineIcon />
-                    </Fab>
+                    {item?.createdBy === user.uid ? (
+                      <Fab
+                        id="gameDeleteBtn"
+                        key={item?.id}
+                        color="error"
+                        aria-label="delete"
+                        size="small"
+                        disabled={loading ? true : false}
+                        onClick={() => {
+                          handleDeleteBtnClick(item.id);
+                        }}
+                      >
+                        <DeleteOutlineIcon />
+                      </Fab>
+                    ) : null}
+
                     <Fab
                       id="gameOptionsBtn"
                       color="primary"
                       aria-label="edit"
+                      disabled={loading ? true : false}
                       size="small"
                       onClick={() => {
                         handleGameMenuClick(item.id);
                       }}
                     >
-                      <EditIcon />
+                      {item?.createdBy === user.uid ? (
+                        <EditIcon />
+                      ) : (
+                        <VisibilityIcon />
+                      )}
                     </Fab>
                   </StyledFabSection>
                 </StyledListItem>

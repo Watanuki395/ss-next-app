@@ -99,12 +99,11 @@ const findGameByGameId = async (gameId) => {
     // Devuelve el primer documento correspondiente encontrado
     return querySnapshot.docs[0];
   } else {
-    // Si no se encontró un juego con ese gameId, puedes manejarlo como desees
-    return null; // O lanzar una excepción, por ejemplo
+    return null;
   }
 };
 
-export const addParticipantToGame = async (gameId, userId) => {
+export const addParticipantToGame = async (gameId, userId, fname) => {
   try {
     const gameIdToSearch = gameId;
     const gameDocument = await findGameByGameId(gameIdToSearch);
@@ -113,36 +112,45 @@ export const addParticipantToGame = async (gameId, userId) => {
       const gameDocRef = doc(db, "games", gameDocument.id);
       // Obtenemos la lista actual de participantes
       const currentParticipants = gameDocument.data().players || [];
+
       // Verificamos si el usuario ya está en la lista
-      if (!currentParticipants.includes(userId)) {
+      const userExists = currentParticipants.some(
+        (player) => player.id === userId
+      );
+
+      if (!userExists) {
         // Si no está, lo agregamos
-        currentParticipants.push(userId);
-        console.log(gameDocument.id);
-        // Actualizamos el documento del juego con la nueva lista de participantes
+        currentParticipants.push({
+          id: userId,
+          userName: fname,
+          playing: true,
+        });
+
         await updateDoc(gameDocRef, { players: currentParticipants });
         await updateUserGames(gameDocument.id, userId);
+
         return {
           success: true,
-          message: `Usuario ${userId} agregado al juego ${gameId}`,
+          message: `Ahora estas en el juego ${gameId}`,
         };
       } else {
         //throw new Error(`El usuario ${userId} ya está jugando en este juego`);
         return {
           success: false,
-          message: `El usuario ${userId} ya está jugando en este juego`,
+          message: `Ya estás participando en este juego.`,
         };
       }
     } else {
-      console.log(`El juego con ID ${gameId} no existe`);
+      console.log(`El juego con ID ${gameId} no existe.`);
       return {
         success: false,
-        message: `El juego con ID ${gameId} no existe`,
+        message: `El juego con ID ${gameId} no existe :(`,
       };
     }
   } catch (error) {
     return {
       success: false,
-      message: `El usuario ${userId} ya está jugando en este juego`,
+      message: `El juego con el ID: ${gameId} no existe`,
       error: error.message,
     };
   }
@@ -167,38 +175,43 @@ export const updateGameById = async (collectionName, gameId, updatedFields) => {
 };
 
 export const deleteGameWithUserUpdates = async (userId, gameId) => {
-  const userRef = doc(db, "users", userId);
-  const userDoc = await getDoc(userRef);
+  try {
+    // Buscar todos los documentos de usuario que contienen el gameId.
+    const usersCollection = collection(db, "users");
+    const q = query(usersCollection, where("games", "array-contains", gameId));
+    const userDocs = await getDocs(q);
 
-  if (userDoc.exists()) {
-    // Verifica si el juego está en la lista de juegos del usuario y, si es así, elimínalo.
-    const userData = userDoc.data();
-    if (userData.games && userData.games.includes(gameId)) {
-      const updatedGames = userData.games.filter((id) => id !== gameId);
+    // Actualizar cada documento de usuario encontrado.
+    const updatePromises = userDocs.docs.map(async (userDoc) => {
+      const userId = userDoc.id;
+      const userData = userDoc.data();
+      const updatedUserGames = userData.games.filter((id) => id !== gameId);
 
-      // Actualiza el documento del usuario para reflejar la eliminación del juego.
+      // Actualizar el documento del usuario para reflejar la eliminación del juego.
+      const userRef = doc(db, "users", userId);
       await updateDoc(userRef, {
-        games: updatedGames,
+        games: updatedUserGames,
       });
 
-      // Ahora puedes eliminar el juego de la colección de juegos.
-      const gameRef = doc(db, "games", gameId);
-      await deleteDoc(gameRef);
+      return { userId, success: true };
+    });
 
-      return {
-        success: true,
-        message: "Juego eliminado y usuario actualizado correctamente.",
-      };
-    } else {
-      return {
-        success: false,
-        message: "El juego no está en la lista de juegos del usuario.",
-      };
-    }
-  } else {
+    // Esperar a que todas las actualizaciones se completen.
+    await Promise.all(updatePromises);
+
+    // Eliminar el juego de la colección de juegos.
+    const gameRef = doc(db, "games", gameId);
+    await deleteDoc(gameRef);
+
+    return {
+      success: true,
+      message: "Juego eliminado y usuarios actualizados correctamente.",
+    };
+  } catch (error) {
     return {
       success: false,
-      message: "No se encontró al usuario con el ID proporcionado.",
+      message: "Error al eliminar el juego y actualizar usuarios.",
+      error: error.message,
     };
   }
 };
@@ -292,6 +305,91 @@ export const updateUserGames = async (gameId, userId) => {
       success: false,
       message: "Error al actualizar el juego del usuario:",
       error,
+    };
+  }
+};
+
+export const getUserNamesFromPlayerIds = async (playerIds) => {
+  try {
+    console.log(playerIds);
+    const userRef = collection(db, "users");
+    const userQuery = query(userRef, where("userId", "in", playerIds));
+    const userSnapshot = await getDocs(userQuery);
+
+    const userNames = userSnapshot.docs.map((doc) => {
+      const userData = doc.data();
+      return userData.fname || "Nombre de usuario no disponible";
+    });
+
+    return {
+      success: true,
+      message: "Nombres de usuarios obtenidos exitosamente.",
+      userNames,
+    };
+  } catch (error) {
+    console.error("Error al obtener nombres de usuarios:", error);
+    return {
+      success: false,
+      message: "Error al obtener nombres de usuarios",
+      error: error.message,
+      userNames: [],
+    };
+  }
+};
+
+export const removeParticipantFromGame = async (gameId, userId) => {
+  try {
+    const gameDocRef = doc(db, "games", gameId);
+    const gameDocument = await getDoc(gameDocRef);
+
+    if (gameDocument.exists()) {
+      const userRef = doc(db, "users", userId);
+      const userDoc = await getDoc(userRef);
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+
+        if (userData.games && userData.games.includes(gameId)) {
+          const updatedGames = userData.games.filter((game) => game !== gameId);
+
+          await updateDoc(userRef, {
+            games: updatedGames,
+          });
+
+          // Obtenemos la lista actual de participantes del juego
+          const currentParticipants = gameDocument.data();
+
+          // Filtramos la lista para quitar al usuario con el ID proporcionado
+          const updatedParticipants = currentParticipants.players.filter(
+            (player) => player.id !== userId
+          );
+
+          // Actualizamos el documento del juego con la nueva lista de participantes
+          await updateDoc(gameDocRef, { players: updatedParticipants });
+
+          return {
+            success: true,
+            message: `Usuario ${userId}  actualizado y removido del juego ${gameId}`,
+          };
+        }
+      } else {
+        return {
+          success: false,
+          message: "No se encontró al usuario con el ID proporcionado.",
+        };
+      }
+    } else {
+      console.log(`El juego con ID ${gameId} no existe`);
+      return {
+        success: false,
+        message: `El juego con ID ${gameId} no existe`,
+      };
+    }
+  } catch (error) {
+    return {
+      success: false,
+      message: `Error al remover usuario ${userId} del juego ${gameId} con el error ${error.message}`,
+      error: error.message,
     };
   }
 };

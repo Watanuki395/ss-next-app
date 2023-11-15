@@ -39,8 +39,9 @@ const today = dayjs();
 function GamePage() {
   const collectionName = "games";
 
-  const { user, setLoading, loading } = useAuth();
+  const { user, userInfo } = useAuth();
 
+  const [loading, setLoading] = useState(false);
   const [notify, setNotify] = useState({
     isOpen: false,
     title: "",
@@ -59,13 +60,13 @@ function GamePage() {
   const validationSchema = Yup.object().shape({
     gameName: Yup.string()
       .required(
-        "Es necesario poner un nombre al juego para que lo puedas identificar",
+        "Es necesario poner un nombre al juego para que lo puedas identificar"
       )
       .max(255, `Máximo 255 caracteres`)
       .min(5, `Mínimo 5 caracteres`),
     gameDescription: Yup.string().max(255, `Máximo 255 caracteres`),
     dateOfGame: Yup.date().required(
-      "Es necesario establecer una fecha para el intercambio",
+      "Es necesario establecer una fecha para el intercambio"
     ),
     gameAmount: Yup.number()
       .positive()
@@ -94,7 +95,7 @@ function GamePage() {
         const r = (Math.random() * 16) | 0;
         const v = c === "x" ? r : (r & 0x3) | 0x8;
         return v.toString(16);
-      },
+      }
     );
 
     // Combina los dígitos y las letras
@@ -114,21 +115,23 @@ function GamePage() {
         gameAmount: vals.gameAmount,
         gameActive: null,
         gameId: gameID,
-        players: [user.uid],
+        players: [{ id: user.uid, userName: userInfo.fname, playing: true }],
       };
       if (data && user.uid && collectionName) {
         setLoading(true);
         await saveGameData(collectionName, null, data, user.uid)
-          .then( async(result) => {
+          .then(async (result) => {
             if (result.success) {
               console.log(result);
-              await updateUserGames(result.gameId, user.uid).then((updateResult)=>{
-                if(updateResult.success){
-                  console.log(updateResult.message)
-                }else {
-                  console.log(updateResult.message)
+              await updateUserGames(result.gameId, user.uid).then(
+                (updateResult) => {
+                  if (updateResult.success) {
+                    console.log(updateResult.message);
+                  } else {
+                    console.log(updateResult.message);
+                  }
                 }
-              })
+              );
               setQRvalue(QRpath + result.gameId);
               console.log(QRpath + result.gameId);
               setNotify({

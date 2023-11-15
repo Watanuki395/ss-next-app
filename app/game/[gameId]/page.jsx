@@ -9,10 +9,12 @@ import Container from "@mui/material/Container";
 import Fab from "@mui/material/Fab";
 import Grid from "@mui/material/Grid";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import InputAdornment from "@mui/material/InputAdornment";
 import ToggleButton from "@mui/material/ToggleButton";
 import LinearProgress from "@mui/material/LinearProgress";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import dayjs from "dayjs";
 import "dayjs/locale/es";
@@ -26,7 +28,7 @@ import { useAuth } from "../../context/AuthContext";
 import { Timestamp } from "firebase/firestore";
 
 import { CustumAlert } from "@/components/CustumAlert/CustumAlert";
-import ActivityList from "@/components/List/ActivityList";
+import UserList from "@/components/List/UserList";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 
@@ -36,11 +38,17 @@ import {
   StyledGridContainer,
 } from "../styles";
 
-import { getDocWhereGameId, updateGameById } from "../../firebase/api";
+import {
+  getDocWhereGameId,
+  updateGameById,
+  getUserNamesFromPlayerIds,
+  removeParticipantFromGame,
+} from "../../firebase/api";
 
 const today = dayjs();
 
 function GameEdit({ params }) {
+  const router = useRouter();
   const collectionName = "games";
 
   const { user } = useAuth();
@@ -63,6 +71,12 @@ function GameEdit({ params }) {
       if (!isCancelled) {
         setGameInfo(response);
         setSelected(response.gameActive);
+
+        getUserNamesFromPlayerIds(response.data.players).then(
+          (playersResult) => {
+            console.log(playersResult);
+          }
+        );
       }
     });
 
@@ -146,6 +160,23 @@ function GameEdit({ params }) {
       console.log(error);
     }
   };
+
+  const handleRemoveUserClick = async () => {
+    await removeParticipantFromGame(params.gameId, user.uid)
+      .then((response) => {
+        if (response.success) {
+          console.log(response.message);
+          router.push("/dashboard");
+        } else {
+          /// TODO
+          console.log(response.message);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <ProtectedRoute>
       <Box sx={{ width: "100%" }}>{loading && <LinearProgress />}</Box>
@@ -166,7 +197,15 @@ function GameEdit({ params }) {
                   </Fab>
                 </Link>
               </Box>
-              <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+              <Box
+                sx={{
+                  flexGrow: 1,
+                  display: {
+                    xs: "none",
+                    md: "flex",
+                  },
+                }}
+              >
                 <Link href={"/dashboard"}>
                   <Fab variant="extended" color="primary" aria-label="crear">
                     <ArrowBackIcon sx={{ mr: 1 }} />
@@ -175,13 +214,37 @@ function GameEdit({ params }) {
                 </Link>
               </Box>
             </div>
-            <div></div>
+            <div>
+              {gameInfo.data.createdBy === user.uid ? null : (
+                <Box
+                  sx={{
+                    flexGrow: 1,
+                    display: {
+                      xs: "none",
+                      md: "flex",
+                    },
+                  }}
+                >
+                  <Fab
+                    variant="extended"
+                    color="warning"
+                    aria-label="crear"
+                    onClick={handleRemoveUserClick}
+                  >
+                    Dejar el juego
+                    <PersonRemoveIcon sx={{ ml: 1 }} />
+                  </Fab>
+                </Box>
+              )}
+            </div>
           </DashboardHeader>
           <StyledGridContainer>
             <Box display={"block"} align={"center"}>
               <StyledContainer>
                 <Typography variant="h4" align={"center"} marginBottom={4}>
-                  Edicion de juego
+                  {gameInfo.data.createdBy === user.uid
+                    ? "Edición de juego"
+                    : "Información del juego"}
                 </Typography>
                 <Formik
                   initialValues={initialValues}
@@ -362,7 +425,9 @@ function GameEdit({ params }) {
                 <Typography variant="h6" align={"center"} marginBottom={4}>
                   Participantes
                 </Typography>
-                <ActivityList></ActivityList>
+                {gameInfo?.data.players ? (
+                  <UserList userlist={gameInfo.data.players}></UserList>
+                ) : null}
               </StyledContainer>
             </Box>
           </StyledGridContainer>
