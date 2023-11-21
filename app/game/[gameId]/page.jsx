@@ -41,7 +41,6 @@ import {
 import {
   getDocWhereGameId,
   updateGameById,
-  getUserNamesFromPlayerIds,
   removeParticipantFromGame,
 } from "../../firebase/api";
 
@@ -55,6 +54,7 @@ function GameEdit({ params }) {
 
   const [loading, setLoading] = useState(false);
   const [gameInfo, setGameInfo] = useState();
+  const [selected, setSelected] = useState();
   const [notify, setNotify] = useState({
     isOpen: false,
     title: "",
@@ -62,28 +62,26 @@ function GameEdit({ params }) {
     type: "",
   });
 
-  const [selected, setSelected] = React.useState(false);
-
   useEffect(() => {
     let isCancelled = false;
 
-    getDocWhereGameId("games", params.gameId).then((response) => {
-      if (!isCancelled) {
-        setGameInfo(response);
-        setSelected(response.gameActive);
-
-        getUserNamesFromPlayerIds(response.data.players).then(
-          (playersResult) => {
-            console.log(playersResult);
-          }
-        );
+    const unsubscribe = getDocWhereGameId(
+      "games",
+      params.gameId,
+      (response) => {
+        if (isCancelled) {
+          setSelected(response?.data?.gameActive);
+          console.log("Done!");
+          setGameInfo(response);
+        }
       }
-    });
+    );
 
     return () => {
       isCancelled = true;
+      unsubscribe;
     };
-  }, []);
+  }, [params.gameId]);
 
   const validationSchema = Yup.object().shape({
     gameName: Yup.string()
@@ -120,14 +118,14 @@ function GameEdit({ params }) {
         gameDescription: vals.gameDescription,
         dateOfGame: dayOfGifs,
         gameAmount: vals.gameAmount,
-        gameActive: selected ? selected : "undefined",
+        gameActive: selected !== undefined ? selected : false,
       };
       if (data && user.uid && collectionName) {
         setLoading(true);
         await updateGameById(collectionName, params.gameId, data)
           .then((result) => {
             if (result.success) {
-              console.log(result);
+              //console.log(result);
               setNotify({
                 isOpen: true,
                 type: "success",
@@ -146,7 +144,7 @@ function GameEdit({ params }) {
             }
           })
           .catch((error) => {
-            console.log(error);
+            //console.log(error);
             setNotify({
               isOpen: true,
               type: "error",
@@ -157,7 +155,7 @@ function GameEdit({ params }) {
           });
       }
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
   };
 
@@ -165,15 +163,15 @@ function GameEdit({ params }) {
     await removeParticipantFromGame(params.gameId, user.uid)
       .then((response) => {
         if (response.success) {
-          console.log(response.message);
+          //console.log(response.message);
           router.push("/dashboard");
         } else {
           /// TODO
-          console.log(response.message);
+          //console.log(response.message);
         }
       })
       .catch((error) => {
-        console.log(error);
+        //console.log(error);
       });
   };
 
@@ -262,29 +260,6 @@ function GameEdit({ params }) {
                   }) => (
                     <Form>
                       <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                          <ToggleButton
-                            value="check"
-                            name="gameActive"
-                            fullWidth
-                            selected={selected}
-                            color={"success"}
-                            disabled={
-                              gameInfo.data.createdBy !== user.uid
-                                ? true
-                                : false
-                            }
-                            onChange={() => {
-                              setSelected(!selected);
-                            }}
-                          >
-                            {selected === true
-                              ? "Activar"
-                              : selected === false
-                              ? "Finalizar"
-                              : "El juego no ha iniciado"}
-                          </ToggleButton>
-                        </Grid>
                         <Grid item xs={12}>
                           <Field
                             name="gameName"
@@ -383,7 +358,7 @@ function GameEdit({ params }) {
                             InputProps={{
                               startAdornment: (
                                 <InputAdornment position="start">
-                                  $
+                                  ₡
                                 </InputAdornment>
                               ),
                             }}
@@ -400,6 +375,33 @@ function GameEdit({ params }) {
                                 : false
                             }
                           />
+                        </Grid>
+
+                        <Grid item xs={12}>
+                          <Typography variant="h6" mb={1}>
+                            Estado del juego
+                          </Typography>
+                          <ToggleButton
+                            value="check"
+                            name="gameActive"
+                            fullWidth
+                            selected={
+                              selected !== undefined
+                                ? selected
+                                : gameInfo.data.gameActive
+                            }
+                            color={"success"}
+                            disabled={
+                              gameInfo.data.createdBy !== user.uid
+                                ? true
+                                : false
+                            }
+                            onChange={() => {
+                              setSelected(!selected);
+                            }}
+                          >
+                            {selected === true ? "Activo" : "Inactivo"}
+                          </ToggleButton>
                         </Grid>
                       </Grid>
                       <Button

@@ -28,9 +28,9 @@ export const IconContainer = styled.div`
   justify-content: center;
   width: 100%;
   height: 100%;
-  padding: 1.5rem 5px 1.5rem 5px;
+  padding: 1rem 5px 1rem 5px;
   font-size: 54px;
-  border-radius: 8px;
+  border-radius: 60px;
   background-color: ${({ theme }) => theme.bg2};
 
   @media screen and (max-width: 768px) {

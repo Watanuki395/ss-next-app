@@ -25,67 +25,48 @@ export const onGetLinks = (collectionName, callback) => {
   return unsub;
 };
 
-export const getAllDocsWhereUserId = async (userId) => {
-  const userDocRef = doc(db, "users", userId);
+export const getGamesByUserId = (userId, callback) => {
+  const gamesCollection = collection(db, "games");
 
-  try {
-    const userDocSnapshot = await getDoc(userDocRef);
+  return onSnapshot(gamesCollection, (snapshot) => {
+    const games = [];
 
-    if (userDocSnapshot.exists()) {
-      const userData = userDocSnapshot.data();
-      const gamesArray = userData.games || [];
-
-      if (gamesArray.length > 0) {
-        // Crea un array de promesas para obtener los juegos por sus IDs
-        const gamesPromises = gamesArray.map(async (gameId) => {
-          const gameDocRef = doc(db, "games", gameId);
-          const gameDocSnapshot = await getDoc(gameDocRef);
-
-          if (gameDocSnapshot.exists()) {
-            const gameData = gameDocSnapshot.data();
-            return { id: gameDocSnapshot.id, ...gameData };
-          }
-
-          return null; // Si el juego no existe
-        });
-        const gamesData = await Promise.all(gamesPromises);
-
-        return gamesData;
-      } else {
-        console.log("El usuario no tiene juegos asociados.");
-        return [];
+    snapshot.forEach((doc) => {
+      const game = doc.data();
+      if (game.players.some((player) => player.id === userId)) {
+        games.push({ id: doc.id, ...game });
       }
-    } else {
-      console.log("El usuario no existe.");
-      return [];
-    }
-  } catch (error) {
-    console.error("Error al obtener los juegos del usuario:", error);
-    return [];
-  }
+    });
+
+    callback(games);
+  });
 };
 
-export const getDocWhereGameId = async (collectionName, id) => {
+export const getDocWhereGameId = async (collectionName, gameId, callback) => {
   try {
-    const docSnapshot = await getDoc(doc(db, collectionName, id));
-    if (docSnapshot.exists()) {
-      return {
-        success: true,
-        data: docSnapshot.data(),
-      };
-    } else {
-      return {
-        success: false,
-        message: "No se encontró ningún juego con el ID proporcionado.",
-      };
-    }
+    const gameRef = doc(db, collectionName, gameId);
+
+    // Devuelve una función de desuscripción para detener la escucha cuando sea necesario
+    return onSnapshot(gameRef, (docSnapshot) => {
+      if (docSnapshot.exists()) {
+        callback({
+          success: true,
+          data: docSnapshot.data(),
+        });
+      } else {
+        callback({
+          success: false,
+          message: "No se encontró ningún juego con el ID proporcionado.",
+        });
+      }
+    });
   } catch (error) {
     console.error("Error al obtener el juego:", error);
-    return {
+    callback({
       success: false,
       message: "Error al obtener el juego",
       error: error.message,
-    };
+    });
   }
 };
 

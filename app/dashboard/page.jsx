@@ -25,13 +25,15 @@ import {
   ButtonsGrid,
 } from "./styles";
 
-import { addParticipantToGame, getAllDocsWhereUserId } from "../firebase/api";
+import { addParticipantToGame, getGamesByUserId } from "../firebase/api";
 
 function Dashboard() {
   const router = useRouter();
   const { user, userInfo } = useAuth();
   const [loading, setLoading] = useState(false);
   const [secretList, setSecretList] = useState([]);
+  const [gamesUpdated, setGamesUpdated] = useState(false);
+  const [totalGames, setTotalGames] = useState(0);
 
   const [notify, setNotify] = useState({
     isOpen: false,
@@ -50,19 +52,19 @@ function Dashboard() {
 
   useEffect(() => {
     let isCancelled = false;
-    if (user && user.uid) {
-      getAllDocsWhereUserId(user.uid).then((response) => {
+    const unsubscribe =
+      user &&
+      getGamesByUserId(user.uid, (response) => {
         if (!isCancelled) {
           setSecretList(response);
           console.log(response);
         }
       });
-    }
-
     return () => {
       isCancelled = true;
+      unsubscribe;
     };
-  }, [user]);
+  }, [user, gamesUpdated]);
 
   const handleCrearClick = () => {
     router.push("/game");
@@ -86,6 +88,7 @@ function Dashboard() {
       ).then((result) => {
         if (result.success) {
           setLoading(false);
+          setGamesUpdated((prevState) => !prevState);
           setNotify({
             isOpen: true,
             type: "success",
@@ -117,7 +120,7 @@ function Dashboard() {
             <div>
               <Typography variant={"h6"}>Hola, {userInfo?.fname}</Typography>
               <Typography variant={"body2"}>
-                Aquí hay información que recopilamos para ti
+                Aquí hay información que recopilamos para tí
               </Typography>
             </div>
             <ButtonsGrid>
@@ -169,13 +172,13 @@ function Dashboard() {
             <ContentGrid>
               <ChartGrid>
                 <SummaryChart
-                  title="Participaciones"
-                  num={1}
-                  description="Ultimo mes"
+                  title="Participando"
+                  totalGames={totalGames}
+                  description="Juegos"
                 />
                 <SummaryChart
                   title="Peticiones"
-                  num={1}
+                  totalGames={totalGames}
                   description="Ultimo mes"
                 />
               </ChartGrid>
@@ -187,7 +190,10 @@ function Dashboard() {
                   flexDirection: "column",
                 }}
               >
-                <PlayedList gameList={secretList} />
+                <PlayedList
+                  gameList={secretList}
+                  totalGameNum={(newVal) => setTotalGames(newVal)}
+                />
               </Box>
             </ContentGrid>
 

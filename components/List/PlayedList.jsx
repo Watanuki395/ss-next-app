@@ -8,8 +8,6 @@ import Typography from "@mui/material/Typography";
 import Fab from "@mui/material/Fab";
 import EditIcon from "@mui/icons-material/Edit";
 import LinearProgress from "@mui/material/LinearProgress";
-import Skeleton from "@mui/material/Skeleton";
-import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -28,7 +26,7 @@ import {
   StyledContainer,
 } from "./styles";
 
-function PlayedList({ gameList }) {
+function PlayedList({ gameList, totalGameNum }) {
   const router = useRouter();
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -38,6 +36,7 @@ function PlayedList({ gameList }) {
     let isCancelled = false;
     if (!isCancelled) {
       setSecretList(gameList);
+      totalGameNum(gameList?.length ? gameList.length : 0);
     }
 
     return () => {
@@ -90,6 +89,7 @@ function PlayedList({ gameList }) {
             (item) => item.id !== idToDelete
           );
           setSecretList(updatedList);
+          totalGameNum(updatedList.length);
         }
       });
     } catch (error) {
@@ -127,7 +127,7 @@ function PlayedList({ gameList }) {
                         item?.gameActive === true
                           ? "Activo"
                           : item?.gameActive === false
-                          ? "Finalizado"
+                          ? "Inactivo"
                           : "No inciado"
                       }
                       color={

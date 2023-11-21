@@ -63,7 +63,7 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const unsubuscribe = onAuthStateChanged(auth, (currentUser) => {
-      console.log({ currentUser }); //TODO: removed it for PROD
+      //console.log({ currentUser }); //TODO: removed it for PROD
 
       if (currentUser?.uid) {
         getMyUserById(currentUser.uid);
