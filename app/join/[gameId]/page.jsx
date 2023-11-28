@@ -6,8 +6,9 @@ import { useAuth } from "../../context/AuthContext";
 
 const today = dayjs();
 
-function JoinGame({ params }) {
+export default function JoinGame({ params }) {
   const collectionName = "games";
+  const {gameId} = params
 
   const { user } = useAuth();
 
@@ -20,7 +21,7 @@ function JoinGame({ params }) {
     type: "",
   });
 
-  useEffect(() => {}, []);
+  useEffect(() => {}, [gameId]);
 
   const handleSubmit = async (vals) => {};
 
@@ -28,12 +29,11 @@ function JoinGame({ params }) {
     <>
       <Box sx={{ width: "100%" }}>{loading && <LinearProgress />}</Box>
       {user ? (
-        <div> te uniras al juego: {params.gameId}</div>
+        <div> te uniras al juego: {gameId}</div>
       ) : (
         <div>Tienes que registrarte para unirte al super juego</div>
       )}
     </>
   );
 }
-
-export default JoinGame;
+;

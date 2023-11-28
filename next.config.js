@@ -2,6 +2,7 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
+  //output:'export',
   eslint: {
     // Ignorar los errores de ESLint en el desarrollo
     ignoreDuringBuilds: true,

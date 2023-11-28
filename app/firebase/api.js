@@ -42,7 +42,7 @@ export const getGamesByUserId = (userId, callback) => {
   });
 };
 
-export const getDocWhereGameId = async (collectionName, gameId, callback) => {
+export const getDocWhereGameId = (collectionName, gameId, callback) => {
   try {
     const gameRef = doc(db, collectionName, gameId);
 

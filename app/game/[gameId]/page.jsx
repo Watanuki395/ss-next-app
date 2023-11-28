@@ -1,4 +1,4 @@
-"use client";
+'use client'
 import React, { useEffect, useState } from "react";
 import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute";
 import Typography from "@mui/material/Typography";
@@ -46,9 +46,10 @@ import {
 
 const today = dayjs();
 
-function GameEdit({ params }) {
+export default function GameEdit({ params }) {
   const router = useRouter();
   const collectionName = "games";
+  const {gameId} = params;
 
   const { user } = useAuth();
 
@@ -63,25 +64,21 @@ function GameEdit({ params }) {
   });
 
   useEffect(() => {
-    let isCancelled = false;
-
-    const unsubscribe = getDocWhereGameId(
+    const unsubscribe =  getDocWhereGameId(
       "games",
-      params.gameId,
+      gameId,
       (response) => {
-        if (isCancelled) {
           setSelected(response?.data?.gameActive);
-          console.log("Done!");
           setGameInfo(response);
-        }
       }
     );
 
     return () => {
-      isCancelled = true;
-      unsubscribe;
+      if (unsubscribe) {
+        unsubscribe();
+      }
     };
-  }, [params.gameId]);
+  }, [gameId]);
 
   const validationSchema = Yup.object().shape({
     gameName: Yup.string()
@@ -122,7 +119,7 @@ function GameEdit({ params }) {
       };
       if (data && user.uid && collectionName) {
         setLoading(true);
-        await updateGameById(collectionName, params.gameId, data)
+        await updateGameById(collectionName, gameId, data)
           .then((result) => {
             if (result.success) {
               //console.log(result);
@@ -160,7 +157,7 @@ function GameEdit({ params }) {
   };
 
   const handleRemoveUserClick = async () => {
-    await removeParticipantFromGame(params.gameId, user.uid)
+    await removeParticipantFromGame(gameId, user.uid)
       .then((response) => {
         if (response.success) {
           //console.log(response.message);
@@ -440,4 +437,4 @@ function GameEdit({ params }) {
   );
 }
 
-export default GameEdit;
+;

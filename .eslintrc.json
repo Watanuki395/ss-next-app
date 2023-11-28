@@ -3,7 +3,7 @@
   "plugins": ["prettier"],
   "rules": {
     "semi": ["warn", "never"],
-    "quotes": ["warn", "never"],
+    "quotes": ["warn", "none"],
     "indent": ["warn", 2],
     "prettier/prettier": [
       "warn",

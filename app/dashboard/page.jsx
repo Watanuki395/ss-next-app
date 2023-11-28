@@ -62,7 +62,9 @@ function Dashboard() {
       });
     return () => {
       isCancelled = true;
-      unsubscribe;
+      if (unsubscribe) {
+        unsubscribe();
+      }
     };
   }, [user, gamesUpdated]);
 
