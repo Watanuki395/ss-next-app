@@ -106,7 +106,7 @@ export default function Navbar() {
     }
   };
 
-  return !loading && user ? (
+  return !loading ? (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
