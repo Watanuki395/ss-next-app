@@ -1,18 +1,23 @@
 "use client";
-import * as React from "react";
-import { ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import NextAppDirEmotionCacheProvider from "./EmotionCache";
-import theme from "./theme";
+import { CacheProvider } from "@emotion/react";
+import { ThemeProvider as PreferredThemeProvider } from "next-themes";
 
-export default function ThemeRegistry({ children }) {
+import createEmotionCache from "../ThemeRegistry/EmotionCache";
+import MUIThemeProvider from "./MUIThemeProvider";
+
+// Client-side cache, shared for the whole session of the user in the browser.
+const clientSideEmotionCache = createEmotionCache();
+
+function ThemeRegistry(props) {
+  const { children, emotionCache = clientSideEmotionCache } = props;
+
   return (
-    <NextAppDirEmotionCacheProvider options={{ key: "mui" }}>
-      <ThemeProvider theme={theme}>
-        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-        <CssBaseline />
-        {children}
-      </ThemeProvider>
-    </NextAppDirEmotionCacheProvider>
+    <PreferredThemeProvider>
+      <CacheProvider value={emotionCache}>
+        <MUIThemeProvider>{children}</MUIThemeProvider>
+      </CacheProvider>
+    </PreferredThemeProvider>
   );
 }
+
+module.exports = ThemeRegistry;

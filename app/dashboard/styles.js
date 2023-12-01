@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 export const DashboardHeader = styled.div({
   display: "flex",
   flexDirection: "row",
-  //alignItems: "flex-start",
   marginBottom: "4rem",
   marginTop: "1rem",
   justifyContent: "space-between",

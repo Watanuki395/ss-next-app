@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -20,12 +20,18 @@ import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import Skeleton from "@mui/material/Skeleton";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
+import Fab from "@mui/material/Fab";
 
 import { useAuth } from "../../app/context/AuthContext";
+import { Grid } from "@mui/material";
+import { useTheme } from "next-themes";
 
 export default function Navbar() {
   const router = useRouter();
   const { user, logout, loading } = useAuth();
+  const { resolvedTheme, setTheme } = useTheme();
 
   const settings = [
     {
@@ -46,14 +52,20 @@ export default function Navbar() {
   if (user) {
     pages.push(
       { label: "about", name: "reglas" },
-      { label: "dashboard", name: "Inicio" },
+      { label: "dashboard", name: "Inicio" }
     );
   } else {
     pages.pop();
   }
 
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const [isDarkMode, setDarkMode] = useState(true);
+
+  const toggleThemeMode = () => {
+    setDarkMode(!isDarkMode);
+    setTheme(resolvedTheme === "light" ? "dark" : "light");
+  };
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -94,7 +106,7 @@ export default function Navbar() {
     }
   };
 
-  return (
+  return !loading && user ? (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
@@ -185,12 +197,36 @@ export default function Navbar() {
           ) : loading ? (
             <Skeleton variant="circular" width={40} height={40} />
           ) : (
-            <Box sx={{ flexGrow: 0 }}>
-              <Tooltip title="Ver más">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Remy Sharp" src="" />
-                </IconButton>
-              </Tooltip>
+            <Grid
+              sx={{
+                display: "flex",
+                flexDirection: "row-reverse",
+                columnGap: "1rem",
+              }}
+            >
+              <Grid item>
+                <Tooltip title="Ver más">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar alt="usuario" src="" />
+                  </IconButton>
+                </Tooltip>
+              </Grid>
+              <Grid item>
+                <Tooltip title={`Tema ${isDarkMode ? "oscuro" : "claro"}`}>
+                  <Fab
+                    size="small"
+                    color="primary"
+                    onClick={toggleThemeMode}
+                    sx={{ p: 0 }}
+                  >
+                    {isDarkMode ? (
+                      <DarkModeIcon alt="Modo Oscuro" />
+                    ) : (
+                      <LightModeIcon alt="Modo Claro" />
+                    )}
+                  </Fab>
+                </Tooltip>
+              </Grid>
               <Menu
                 sx={{ mt: "45px" }}
                 id="menu-appbar"
@@ -214,10 +250,12 @@ export default function Navbar() {
                   </MenuItem>
                 ))}
               </Menu>
-            </Box>
+            </Grid>
           )}
         </Toolbar>
       </Container>
     </AppBar>
+  ) : (
+    <></>
   );
 }

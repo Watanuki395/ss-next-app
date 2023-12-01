@@ -7,6 +7,7 @@ import {
   CardContentWrapper,
   IconContainer,
   StyledCardGiftcardOutlinedIcon,
+  StyledCardContent,
 } from "./styles.js";
 
 const SummaryChart = ({ title, totalGames, description }) => {
@@ -27,14 +28,7 @@ const SummaryChart = ({ title, totalGames, description }) => {
 
   return (
     <Card sx={{ maxHeight: "10rem", minHeight: "9rem" }}>
-      <CardContent
-        sx={{
-          display: "grid",
-          gridTemplateColumns: "120px 1fr",
-          gridColumnGap: "2.5rem",
-          minWidth: "22rem",
-        }}
-      >
+      <StyledCardContent>
         <IconContainer>
           <StyledCardGiftcardOutlinedIcon />
         </IconContainer>
@@ -52,7 +46,7 @@ const SummaryChart = ({ title, totalGames, description }) => {
             {description ? description : "ultimo mes"}
           </Typography>
         </CardContentWrapper>
-      </CardContent>
+      </StyledCardContent>
     </Card>
   );
 };

@@ -310,7 +310,7 @@ function GamePage() {
                             InputProps={{
                               startAdornment: (
                                 <InputAdornment position="start">
-                                  $
+                                  ₡
                                 </InputAdornment>
                               ),
                             }}

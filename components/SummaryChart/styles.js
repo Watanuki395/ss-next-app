@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import CardGiftcardOutlined from "@mui/icons-material/CardGiftcardOutlined";
+import CardContent from "@mui/material/CardContent";
 
 export const ChartGrid = styled.div`
   display: grid;
@@ -31,7 +32,7 @@ export const IconContainer = styled.div`
   padding: 1rem 5px 1rem 5px;
   font-size: 54px;
   border-radius: 60px;
-  background-color: ${({ theme }) => theme.bg2};
+  background-color: ${({ theme }) => theme.bg4};
 
   @media screen and (max-width: 768px) {
   }
@@ -45,4 +46,11 @@ export const StyledCardGiftcardOutlinedIcon = styled(CardGiftcardOutlined)`
   color: ${({ theme }) => theme.text};
   transition: "fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms";
   user-select: "none";
+`;
+export const StyledCardContent = styled(CardContent)`
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  grid-column-gap: 2.5rem;
+  min-width: 22rem;
+  background-color: ${({ theme }) => theme.bg1};
 `;
