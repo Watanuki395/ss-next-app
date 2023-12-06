@@ -199,15 +199,13 @@ export default function Navbar() {
               }}
             >
               <Link href={`/login`}>
-                <Button color="secondary" variant="contained">
-                  Iniciar Sesión
-                </Button>
+                <Button variant="contained">Iniciar Sesión</Button>
               </Link>
               <Grid item>
                 <Tooltip title={`Tema ${isDarkMode ? "oscuro" : "claro"}`}>
                   <Fab
                     size="small"
-                    color="secondary"
+                    color="primary"
                     onClick={toggleThemeMode}
                     sx={{ p: 0 }}
                   >
