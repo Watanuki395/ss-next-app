@@ -14,13 +14,17 @@ const containerVariants = {
   visible: { opacity: 1, y: 0 },
 };
 
-export const StyledContainer = styled(motion.div)({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  marginTop: "3rem",
-  maxWidth: "840px",
-});
+export const StyledContainer = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 3rem;
+  padding: 2rem;
+  max-width: 840px;
+  gap: 1rem;
+  background-color: ${({ theme }) => theme.bg3};
+  border-radius: 20px;
+`;
 
 StyledContainer.defaultProps = {
   initial: "hidden",
@@ -32,7 +36,6 @@ StyledContainer.defaultProps = {
 export const StyledGridContainer = styled(motion.div)({
   display: "flex",
   flexDirection: "row",
-  alignItems: "center",
   alignContent: "center",
   justifyContent: "center",
   columnGap: "2rem",

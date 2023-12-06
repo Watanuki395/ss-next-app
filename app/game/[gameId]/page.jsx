@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useEffect, useState } from "react";
 import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute";
 import Typography from "@mui/material/Typography";
@@ -49,7 +49,7 @@ const today = dayjs();
 export default function GameEdit({ params }) {
   const router = useRouter();
   const collectionName = "games";
-  const {gameId} = params;
+  const { gameId } = params;
 
   const { user } = useAuth();
 
@@ -64,14 +64,10 @@ export default function GameEdit({ params }) {
   });
 
   useEffect(() => {
-    const unsubscribe =  getDocWhereGameId(
-      "games",
-      gameId,
-      (response) => {
-          setSelected(response?.data?.gameActive);
-          setGameInfo(response);
-      }
-    );
+    const unsubscribe = getDocWhereGameId("games", gameId, (response) => {
+      setSelected(response?.data?.gameActive);
+      setGameInfo(response);
+    });
 
     return () => {
       if (unsubscribe) {
@@ -419,7 +415,7 @@ export default function GameEdit({ params }) {
                 </Formik>
               </StyledContainer>
             </Box>
-            <Box display={"block"} align={"center"}>
+            <Box>
               <StyledContainer>
                 <Typography variant="h6" align={"center"} marginBottom={4}>
                   Participantes
@@ -436,5 +432,3 @@ export default function GameEdit({ params }) {
     </ProtectedRoute>
   );
 }
-
-;

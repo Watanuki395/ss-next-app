@@ -191,26 +191,16 @@ export default function Navbar() {
           </Box>
 
           {!user && !loading ? (
-            <Link href={`/login`}>
-              <Button variant="contained">Iniciar Sesión</Button>
-            </Link>
-          ) : loading ? (
-            <Skeleton variant="circular" width={40} height={40} />
-          ) : (
             <Grid
               sx={{
                 display: "flex",
                 flexDirection: "row-reverse",
-                columnGap: "1rem",
+                columnGap: "2rem",
               }}
             >
-              <Grid item>
-                <Tooltip title="Ver más">
-                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar alt="usuario" src="" />
-                  </IconButton>
-                </Tooltip>
-              </Grid>
+              <Link href={`/login`}>
+                <Button variant="contained">Iniciar Sesión</Button>
+              </Link>
               <Grid item>
                 <Tooltip title={`Tema ${isDarkMode ? "oscuro" : "claro"}`}>
                   <Fab
@@ -227,6 +217,41 @@ export default function Navbar() {
                   </Fab>
                 </Tooltip>
               </Grid>
+            </Grid>
+          ) : loading ? (
+            <Skeleton variant="circular" width={40} height={40} />
+          ) : (
+            <Grid
+              sx={{
+                display: "flex",
+                flexDirection: "row-reverse",
+                columnGap: "2rem",
+              }}
+            >
+              <Grid item>
+                <Tooltip title="Ver más">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar alt="usuario" src="" />
+                  </IconButton>
+                </Tooltip>
+              </Grid>
+              <Grid item>
+                <Tooltip title={`Tema ${isDarkMode ? "oscuro" : "claro"}`}>
+                  <Fab
+                    size="small"
+                    color="secondary"
+                    onClick={toggleThemeMode}
+                    sx={{ p: 0 }}
+                  >
+                    {isDarkMode ? (
+                      <DarkModeIcon alt="Modo Oscuro" />
+                    ) : (
+                      <LightModeIcon alt="Modo Claro" />
+                    )}
+                  </Fab>
+                </Tooltip>
+              </Grid>
+
               <Menu
                 sx={{ mt: "45px" }}
                 id="menu-appbar"

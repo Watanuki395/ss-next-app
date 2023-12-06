@@ -32,7 +32,7 @@ export const IconContainer = styled.div`
   padding: 1rem 5px 1rem 5px;
   font-size: 54px;
   border-radius: 60px;
-  background-color: ${({ theme }) => theme.bg4};
+  background-color: ${({ theme }) => theme.bg2};
 
   @media screen and (max-width: 768px) {
   }

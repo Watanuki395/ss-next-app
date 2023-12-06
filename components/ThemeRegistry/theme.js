@@ -7,58 +7,26 @@ const roboto = Roboto_Mono({
   display: "swap",
 });
 
-const lightThemex = {
-  sbg: "rgb(147,147,160)",
-  bg: "rgb(255,255,255)",
-  bgAlpha: "rgba(250,250,250,.3)",
-  bg2: "rgb(190,200,205, .5)",
-  bg3: "rgb(230,230,230)",
-  bg4: "rgb(230,230,230)",
-  text: "rgb(45,45,45)",
-  primary: "rgb(52, 131, 235)",
-  deleteText: "crimson",
-  viewText: "darkblue",
-  textFieldHover: "#a9a8ad",
-  TextFieldBorder: "#d6d5e6",
-};
-// const darkTheme = {
-//   sbg: "rgb(15,15,15)",
-//   bg: "rgb(15,15,15)",
-//   bgAlpha: "rgba(0,0,0,.3)",
-//   bg2: "rgb(30,30,30)",
-//   bg3: "rgb(50,50,50)",
-//   bg4: "rgb(230,230,230)",
-//   text: "rgb(210,210,210)",
-//   primary: "rgb(52, 131, 235)",
-//   deleteText: "crimson",
-//   viewText: "rgba(64, 127, 170, 0.75)",
-//   textFieldHover: "#a9a8ad",
-//   TextFieldBorder: "#d6d5e6",
-// };
-
-const lightThemeCristmas = {
-  sbg: "rgb(147,123,113)", // Cinereous / Ceniciento
-  bg: "rgb(246,231,224)", // Seashell / Concha
-  bgAlpha: "rgba(246,231,224,.3)",
-  bg2: "rgb(253,205,169, .5)", // Peach / Melocotón
-  bg3: "rgb(253,231,190)", // Wheat / Trigo
-  bg4: "rgb(253,205,169, .5)",
-  text: "rgb(40,32,30)", // Raisin black / Negro pasa
-  primary: "rgb(112,51,30)", // Sienna / Siena
-  deleteText: "rgb(33,6,11)", // Licorice / Regaliz
-  viewText: "rgb(52,53,45)", // Black olive / Aceituna negra
-  textFieldHover: "#d6d5e6",
-  TextFieldBorder: "#d6d5e6",
-};
-
 export const lightTheme = createTheme({
   palette: {
     mode: "light",
+    // Tema claro
     primary: {
-      main: "#3f51b5",
+      main: "#ff9800",
     },
     secondary: {
-      main: "#CE93D8",
+      main: "#fff9c4",
+    },
+    error: {
+      main: "#c83e4d",
+    },
+    background: {
+      default: "#fffde7",
+      paper: "#fff9c4",
+    },
+    text: {
+      primary: "#28201e",
+      secondary: "#4f4f4f",
     },
   },
   typography: {
@@ -83,7 +51,7 @@ export const lightTheme = createTheme({
           color: "#FFFFFF",
           input: {
             "&:-webkit-autofill": {
-              WebkitBoxShadow: "0 0 0 100px #121212  inset",
+              WebkitBoxShadow: "0 0 0 100px #fde7be  inset",
               WebkitTextFillColor: "default",
             },
           },
@@ -147,16 +115,16 @@ export const lightTheme = createTheme({
       },
     },
   },
-  sbg: "rgb(147,123,113)", // Cinereous / Ceniciento
-  bg: "rgb(246,231,224)", // Seashell / Concha
-  bgAlpha: "rgba(246,231,224,.3)",
-  bg2: "rgb(253,205,169, .5)", // Peach / Melocotón
-  bg3: "rgb(253,231,190)", // Wheat / Trigo
-  bg4: "rgb(253,231,190)",
-  text: "rgb(40,32,30)", // Raisin black / Negro pasa
-  primary: "rgb(112,51,30)", // Sienna / Siena
-  deleteText: "rgb(33,6,11)", // Licorice / Regaliz
-  viewText: "rgb(52,53,45)", // Black olive / Aceituna negra
+  sbg: "#937b71",
+  bg: "#f6e7e0",
+  bgAlpha: "#f6e7e0",
+  bg2: "#fdcda9",
+  bg3: "#fde7be",
+  bg4: "#fde7be",
+  text: "#28201e",
+  primary: "#70331e",
+  deleteText: "#21060b",
+  viewText: "#34352d",
   textFieldHover: "#d6d5e6",
   TextFieldBorder: "#d6d5e6",
 });
@@ -164,11 +132,23 @@ export const lightTheme = createTheme({
 export const darkTheme = createTheme({
   palette: {
     mode: "dark",
+    // Tema oscuro
     primary: {
       main: "#3f51b5",
     },
     secondary: {
-      main: "#CE93D8",
+      main: "#847577",
+    },
+    error: {
+      main: "#c83e4d",
+    },
+    background: {
+      default: "#1e1e1e",
+      paper: "#212529",
+    },
+    text: {
+      primary: "#ffffff", // Blanco
+      secondary: "#b8c2cc", // Gris claro
     },
   },
   typography: {
@@ -193,7 +173,7 @@ export const darkTheme = createTheme({
           color: "#FFFFFF",
           input: {
             "&:-webkit-autofill": {
-              WebkitBoxShadow: "0 0 0 100px #121212  inset",
+              WebkitBoxShadow: "0 0 0 100px rgb(57, 60, 63)  inset",
               WebkitTextFillColor: "default",
             },
           },
@@ -261,7 +241,7 @@ export const darkTheme = createTheme({
   bg: "rgb(255,255,255)",
   bgAlpha: "rgba(250,250,250,.3)",
   bg2: "rgb(190,200,205, .5)",
-  bg3: "rgb(230,230,230)",
+  bg3: "rgb(57, 60, 63)",
   bg4: "rgb(253,205,169, .5)", // Peach / Melocotón
   text: "rgb(214, 214, 214)",
   primary: "rgb(52, 131, 235)",
@@ -274,15 +254,15 @@ export const darkTheme = createTheme({
 export const globalStyles = css`
   :root {
     body {
-      background-color: #fdcda9;
-      color: #2d2d2d;
+      //background-color: #fdcda9;
+      //color: #2d2d2d;
     }
   }
 
   [data-theme="dark"] {
     body {
-      background-color: #1e1e1e;
-      color: #d2d2d2;
+      //background-color: #1e1e1e;
+      //color: #d2d2d2;
     }
   }
 `;

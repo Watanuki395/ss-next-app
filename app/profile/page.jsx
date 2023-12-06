@@ -141,7 +141,7 @@ function ProfilePage() {
         <Grid>
           <Box display={"block"} align={"center"}>
             <StyledContainer>
-              <Typography variant={"h4"} align={"center"} marginTop={3}>
+              <Typography variant={"h4"} align={"center"} margin={3}>
                 Perfil de usuario
               </Typography>
 
@@ -155,65 +155,63 @@ function ProfilePage() {
               >
                 {({ errors, touched, isSubmitting, values }) => (
                   <Form>
-                    <StyledContainer>
-                      <Grid container spacing={2}>
-                        <Grid item xs={12} sm={6}>
-                          <Field
-                            name="fname"
-                            value={values.fname ? values.fname : ""}
-                            fullWidth
-                            label="Nombre"
-                            as={TextField}
-                            error={
-                              Boolean(errors.fname) && Boolean(touched.fname)
-                            }
-                            helperText={Boolean(touched.fname) && errors.fname}
-                            disabled={isSubmitting}
-                          />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                          <Field
-                            name="lname"
-                            value={values.lname ? values.lname : ""}
-                            fullWidth
-                            label="Apellidos"
-                            as={TextField}
-                            error={
-                              Boolean(errors.lname) && Boolean(touched.lname)
-                            }
-                            helperText={Boolean(touched.lname) && errors.lname}
-                            disabled={isSubmitting}
-                          />
-                        </Grid>
-                        <Grid item xs={12}>
-                          <Field
-                            fullWidth
-                            name="email"
-                            value={values.email ? values.email : ""}
-                            disabled
-                            label="Correo Electronico"
-                            type="email"
-                            as={TextField}
-                            error={
-                              Boolean(errors.email) && Boolean(touched.email)
-                            }
-                            helperText={Boolean(touched.email) && errors.email}
-                          />
-                        </Grid>
-                        <Grid item xs={12}></Grid>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={6}>
+                        <Field
+                          name="fname"
+                          value={values.fname ? values.fname : ""}
+                          fullWidth
+                          label="Nombre"
+                          as={TextField}
+                          error={
+                            Boolean(errors.fname) && Boolean(touched.fname)
+                          }
+                          helperText={Boolean(touched.fname) && errors.fname}
+                          disabled={isSubmitting}
+                        />
                       </Grid>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        size="large"
-                        type="submit"
-                        disabled={isSubmitting ? true : false}
-                        sx={{ mt: 3, mb: 2 }}
-                      >
-                        Actualizar
-                      </Button>
-                    </StyledContainer>
+                      <Grid item xs={12} sm={6}>
+                        <Field
+                          name="lname"
+                          value={values.lname ? values.lname : ""}
+                          fullWidth
+                          label="Apellidos"
+                          as={TextField}
+                          error={
+                            Boolean(errors.lname) && Boolean(touched.lname)
+                          }
+                          helperText={Boolean(touched.lname) && errors.lname}
+                          disabled={isSubmitting}
+                        />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Field
+                          fullWidth
+                          name="email"
+                          value={values.email ? values.email : ""}
+                          disabled
+                          label="Correo Electronico"
+                          type="email"
+                          as={TextField}
+                          error={
+                            Boolean(errors.email) && Boolean(touched.email)
+                          }
+                          helperText={Boolean(touched.email) && errors.email}
+                        />
+                      </Grid>
+                      <Grid item xs={12}></Grid>
+                    </Grid>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      size="large"
+                      type="submit"
+                      disabled={isSubmitting ? true : false}
+                      sx={{ mt: 3, mb: 2 }}
+                    >
+                      Actualizar
+                    </Button>
                   </Form>
                 )}
               </Formik>
