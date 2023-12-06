@@ -12,10 +12,10 @@ export const lightTheme = createTheme({
     mode: "light",
     // Tema claro
     primary: {
-      main: "#ff9800",
+      main: "#937b71",
     },
     secondary: {
-      main: "#fff9c4",
+      main: "#f6e7e0",
     },
     error: {
       main: "#c83e4d",
@@ -119,7 +119,7 @@ export const lightTheme = createTheme({
   bg: "#f6e7e0",
   bgAlpha: "#f6e7e0",
   bg2: "#fdcda9",
-  bg3: "#fde7be",
+  bg3: "rgb(252, 230, 190, .50)",
   bg4: "#fde7be",
   text: "#28201e",
   primary: "#70331e",
@@ -147,8 +147,8 @@ export const darkTheme = createTheme({
       paper: "#212529",
     },
     text: {
-      primary: "#ffffff", // Blanco
-      secondary: "#b8c2cc", // Gris claro
+      primary: "#ffffff",
+      secondary: "#b8c2cc",
     },
   },
   typography: {
