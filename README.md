@@ -1,4 +1,29 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Secret Santa App
+
+Welcome to the Secret Santa App, a delightful platform designed for playing the classic gift exchange game with family and friends! With this application, you can create or join Secret Santa games, set customized rules, and let the app handle the logistics, ensuring a fun and surprise-filled experience for everyone involved.
+
+## Introduction
+
+The holiday season is all about spreading joy, and what better way to do that than with a Secret Santa exchange? Our app simplifies the process, allowing you to organize memorable gift exchanges with ease.
+
+### Key Features:
+
+- **Create or Join Games:** Initiate a Secret Santa game with your loved ones or join an existing one for a shared festive experience.
+
+- **Customizable Rules:** Tailor the game to your liking by setting rules such as spending limits, themes, or specific gift preferences.
+
+- **Automated Wishlists:** Forget the hassle of manually managing wishlists. Our app automates the process, making it easy for participants to share their gift preferences.
+
+- **Anonymous Pairing:** The excitement of Secret Santa lies in the mystery. The app ensures nobody knows who their Secret Santa is until the big reveal day.
+
+Whether you're celebrating with family, friends, or colleagues, the Secret Santa App adds a touch of magic to your holiday traditions. Get ready for surprises, laughter, and the joy of giving!
+
+## Tech Stack
+
+The Secret Santa App is built using the following technologies:
+
+- [Next.js 14](https://nextjs.org/): A React framework for building server-rendered applications.
+- [Firebase](https://firebase.google.com/): A platform for developing mobile and web applications, including real-time database and authentication services.
 
 ## Getting Started...
 
@@ -18,17 +43,12 @@ You can start editing the page by modifying `app/page.js`. The page auto-updates
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+# Clone the repository
+git clone https://github.com/yourusername/secret-santa-app.git
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Navigate to the project directory
+cd secret-santa-app
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+# Install dependencies
+npm install
