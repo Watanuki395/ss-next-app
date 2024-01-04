@@ -1,6 +1,19 @@
+![Netlify](https://img.shields.io/netlify/6648d780-2173-4995-9494-275a5e2bfb1e)
+![GitHub language count](https://img.shields.io/github/languages/count/Watanuki395/ss-next-app)
+![GitHub issues](https://img.shields.io/github/issues/Watanuki395/ss-next-app)
+
+
+[Secret Santa Dev Demo](https://silver-tanuki-558f38.netlify.app)
+
 # Secret Santa App
 
 Welcome to the Secret Santa App, a delightful platform designed for playing the classic gift exchange game with family and friends! With this application, you can create or join Secret Santa games, set customized rules, and let the app handle the logistics, ensuring a fun and surprise-filled experience for everyone involved.
+
+### Live App
+
+Explore the Secret Santa App live: [Secret Santa App Demo](https://silver-tanuki-558f38.netlify.app)
+
+
 
 ## Introduction
 
