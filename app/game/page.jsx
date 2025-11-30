@@ -24,9 +24,8 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers";
 
-import { useAuth } from "../context/AuthContext";
-import { saveGameData, updateUserGames } from "../firebase/api";
-import { Timestamp } from "firebase/firestore";
+import { useAuth } from "../context/AuthContextSupabase";
+import { saveGameData, updateUserGames } from "../supabase/api";
 
 import { CustumAlert } from "@/components/CustumAlert/CustumAlert";
 import { Formik, Form, Field } from "formik";
@@ -106,7 +105,7 @@ function GamePage() {
 
   const handleSubmit = async (vals) => {
     try {
-      const dayOfGifs = Timestamp.fromDate(vals.dateOfGame.toDate());
+      const dayOfGifs = vals.dateOfGame.toISOString();
       const gameID = generateUniqueGameID(user.uid);
       const data = {
         gameName: vals.gameName,

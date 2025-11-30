@@ -24,7 +24,7 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import Fab from "@mui/material/Fab";
 
-import { useAuth } from "../../app/context/AuthContext";
+import { useAuth } from "../../app/context/AuthContextSupabase";
 import { Grid } from "@mui/material";
 import { useTheme } from "next-themes";
 
@@ -107,7 +107,13 @@ export default function Navbar() {
   };
 
   return !loading ? (
-    <AppBar position="static">
+    <AppBar 
+      position="static"
+      sx={{
+        background: 'linear-gradient(135deg, #D32F2F 0%, #1B5E20 100%)',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+      }}
+    >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <CardGiftcardIcon
@@ -199,7 +205,23 @@ export default function Navbar() {
               }}
             >
               <Link href={`/login`}>
-                <Button color="secondary" variant="contained">
+                <Button 
+                  variant="contained"
+                  sx={{
+                    backgroundColor: '#FFFFFF',
+                    color: '#D32F2F',
+                    fontWeight: 600,
+                    borderRadius: '50px',
+                    padding: '8px 24px',
+                    textTransform: 'none',
+                    '&:hover': {
+                      backgroundColor: '#F5F5F5',
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+                    },
+                    transition: 'all 0.3s ease',
+                  }}
+                >
                   Iniciar Sesión
                 </Button>
               </Link>

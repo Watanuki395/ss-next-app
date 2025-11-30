@@ -2,7 +2,6 @@
 ![GitHub language count](https://img.shields.io/github/languages/count/Watanuki395/ss-next-app)
 ![GitHub issues](https://img.shields.io/github/issues/Watanuki395/ss-next-app)
 
-
 [Secret Santa Dev Demo](https://silver-tanuki-558f38.netlify.app)
 
 # Secret Santa App
@@ -12,8 +11,6 @@ Welcome to the Secret Santa App, a delightful platform designed for playing the 
 ### Live App
 
 Explore the Secret Santa App live: [Secret Santa App Demo](https://silver-tanuki-558f38.netlify.app)
-
-
 
 ## Introduction
 
@@ -33,10 +30,33 @@ Whether you're celebrating with family, friends, or colleagues, the Secret Santa
 
 ## Tech Stack
 
-The Secret Santa App is built using the following technologies:
+The Secret Santa App is built using modern technologies:
 
-- [Next.js 14](https://nextjs.org/): A React framework for building server-rendered applications.
-- [Firebase](https://firebase.google.com/): A platform for developing mobile and web applications, including real-time database and authentication services.
+- [Next.js 14](https://nextjs.org/) - React framework with App Router
+- [Supabase](https://supabase.com/) - PostgreSQL database, authentication, and realtime
+- [Material-UI](https://mui.com/) - Component library for beautiful UI
+- [Resend](https://resend.com/) - Modern email API for transactional emails
+- [Jest](https://jestjs.io/) - Testing framework
+
+## ✨ New Features
+
+### 🚀 Quick Play Mode
+
+Create a Secret Santa game in seconds without registration. Just add participant emails and go!
+
+### 🎁 Full Featured Mode
+
+Register for access to:
+
+- Personal dashboard
+- Wishlist builder
+- Budget management
+- Automatic reminders
+- Game history
+
+### 🔒 Ultra Secret Santa (Coming Soon)
+
+Maximum mystery mode where participants only see wishlists, not names, until reveal day!
 
 ## Getting Started...
 
@@ -56,12 +76,14 @@ You can start editing the page by modifying `app/page.js`. The page auto-updates
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-
 # Clone the repository
+
 git clone https://github.com/yourusername/secret-santa-app.git
 
 # Navigate to the project directory
+
 cd secret-santa-app
 
 # Install dependencies
+
 npm install

@@ -9,7 +9,7 @@ import Avatar from "@mui/material/Avatar";
 import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Link from "next/link";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContextSupabase";
 import * as Yup from "yup";
 import { Formik, Form, Field } from "formik";
 import { StyledContainer, StyledLinks, StyledLink } from "./styles";

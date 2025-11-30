@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider } from "./context/AuthContextSupabase";
 import ThemeRegistry from "@/components/ThemeRegistry/ThemeRegistry";
 import Navbar from "../components/Navbar/Navbar";
 import Loading from "./loading";

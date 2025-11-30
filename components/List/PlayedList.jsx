@@ -14,9 +14,9 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CustomModal from "../Modal/CustomModal";
 import { CustumAlert } from "@/components/CustumAlert/CustumAlert";
 
-import { deleteGameWithUserUpdates } from "../../app/firebase/api";
+import { deleteGameWithUserUpdates } from "../../app/supabase/api";
 
-import { useAuth } from "../../app/context/AuthContext";
+import { useAuth } from "../../app/context/AuthContextSupabase";
 
 import {
   StyledListItem,

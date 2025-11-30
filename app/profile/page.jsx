@@ -12,8 +12,8 @@ import Link from "next/link";
 import LinearProgress from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
 
-import { useAuth } from "../context/AuthContext";
-import { updateInfo } from "../firebase/api";
+import { useAuth } from "../context/AuthContextSupabase";
+import { updateInfo } from "../supabase/api";
 
 import { CustumAlert } from "@/components/CustumAlert/CustumAlert";
 import { Formik, Form, Field } from "formik";

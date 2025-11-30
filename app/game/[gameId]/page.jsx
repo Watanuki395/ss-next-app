@@ -24,8 +24,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers";
 
-import { useAuth } from "../../context/AuthContext";
-import { Timestamp } from "firebase/firestore";
+import { useAuth } from "../../context/AuthContextSupabase";
 
 import { CustumAlert } from "@/components/CustumAlert/CustumAlert";
 import UserList from "@/components/List/UserList";
@@ -42,7 +41,7 @@ import {
   getDocWhereGameId,
   updateGameById,
   removeParticipantFromGame,
-} from "../../firebase/api";
+} from "../../supabase/api";
 
 const today = dayjs();
 
@@ -98,14 +97,14 @@ export default function GameEdit({ params }) {
   const initialValues = {
     gameName: gameInfo?.data?.gameName,
     gameDescription: gameInfo?.data.gameDescription,
-    dateOfGame: dayjs(gameInfo?.data.dateOfGame?.toDate()),
+    dateOfGame: dayjs(gameInfo?.data.dateOfGame),
     gameAmount: gameInfo?.data.gameAmount,
     gameActive: gameInfo?.data.gameActive,
   };
 
   const handleSubmit = async (vals) => {
     try {
-      const dayOfGifs = Timestamp.fromDate(vals.dateOfGame.toDate());
+      const dayOfGifs = vals.dateOfGame.toISOString();
       const data = {
         gameName: vals.gameName,
         gameDescription: vals.gameDescription,

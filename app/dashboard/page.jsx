@@ -13,7 +13,7 @@ import SummaryChart from "@/components/SummaryChart/SummaryChart";
 import ActivityList from "@/components/List/ActivityList";
 import PlayedList from "@/components/List/PlayedList";
 import CustomModal from "@/components/Modal/CustomModal";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContextSupabase";
 import { CustumAlert } from "@/components/CustumAlert/CustumAlert";
 
 import {
@@ -25,7 +25,7 @@ import {
   ButtonsGrid,
 } from "./styles";
 
-import { addParticipantToGame, getGamesByUserId } from "../firebase/api";
+import { addParticipantToGame, getGamesByUserId } from "../supabase/api";
 
 function Dashboard() {
   const router = useRouter();

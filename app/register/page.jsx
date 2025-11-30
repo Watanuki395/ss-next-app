@@ -17,7 +17,7 @@ import Link from "next/link";
 import Grid from "@mui/material/Grid";
 import { StyledContainer, StyledLinks, StyledLink } from "./styles";
 
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContextSupabase";
 import * as Yup from "yup";
 import { Formik, Form, Field } from "formik";
 

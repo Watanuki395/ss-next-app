@@ -1,4 +1,4 @@
-import { useAuth } from "../../app/context/AuthContext";
+import { useAuth } from "../../app/context/AuthContextSupabase";
 
 import Loading from "@/app/loading";
 import Typography from "@mui/material/Typography";

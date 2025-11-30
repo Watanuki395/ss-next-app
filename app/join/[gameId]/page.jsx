@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import LinearProgress from "@mui/material/LinearProgress";
 
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContextSupabase";
 
 const today = dayjs();
 
