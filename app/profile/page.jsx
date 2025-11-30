@@ -87,9 +87,9 @@ function ProfilePage() {
   };
 
   const handleSubmit = async (vals) => {
-    if (vals && user.uid) {
+    if (vals && user?.id) {
       setLoading(true);
-      await updateInfo(user.uid, collectionName, vals).then(() => {
+      await updateInfo(user.id, collectionName, vals).then(() => {
         setNotify({
           isOpen: true,
           type: "success",

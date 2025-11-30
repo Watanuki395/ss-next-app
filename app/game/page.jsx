@@ -106,7 +106,7 @@ function GamePage() {
   const handleSubmit = async (vals) => {
     try {
       const dayOfGifs = vals.dateOfGame.toISOString();
-      const gameID = generateUniqueGameID(user.uid);
+      const gameID = generateUniqueGameID(user.id);
       const data = {
         gameName: vals.gameName,
         gameDescription: vals.gameDescription,
@@ -114,15 +114,15 @@ function GamePage() {
         gameAmount: vals.gameAmount,
         gameActive: null,
         gameId: gameID,
-        players: [{ id: user.uid, userName: userInfo.fname, playing: true }],
+        players: [{ id: user.id, userName: userInfo.fname, playing: true }],
       };
-      if (data && user.uid && collectionName) {
+      if (data && user?.id && collectionName) {
         setLoading(true);
-        await saveGameData(collectionName, null, data, user.uid)
+        await saveGameData(collectionName, null, data, user.id)
           .then(async (result) => {
             if (result.success) {
               console.log(result);
-              await updateUserGames(result.gameId, user.uid).then(
+              await updateUserGames(result.gameId, user.id).then(
                 (updateResult) => {
                   if (updateResult.success) {
                     console.log(updateResult.message);

@@ -140,6 +140,9 @@ Prueba las siguientes funcionalidades:
   updated_at: timestamp,
   updated_by: uuid
 }
+
+### Nuevos cambios en migración y consultas
+- Se utiliza preferentemente la columna `games` de `users` para obtener la lista de juegos de un usuario (consulta por ids con `.in('id', user.games)`) en lugar de `players` JSONB, lo que simplifica y evita errores de serialización.
 ```
 
 ## 📚 Recursos

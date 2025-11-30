@@ -75,7 +75,7 @@ function PlayedList({ gameList, totalGameNum }) {
   const handleDeleteInModal = async (idToDelete) => {
     try {
       setLoading(true);
-      await deleteGameWithUserUpdates(user.uid, idToDelete).then((response) => {
+      await deleteGameWithUserUpdates(user.id, idToDelete).then((response) => {
         if (response.success) {
           setLoading(false);
           setNotify({
@@ -116,7 +116,7 @@ function PlayedList({ gameList, totalGameNum }) {
                     <Typography variant="body1">ID: {item?.gameId}</Typography>
                     <Typography variant="body1">
                       Juego:
-                      {item?.createdBy === user.uid ? "Propio" : "Participante"}
+                      {item?.createdBy === user.id ? "Propio" : "Participante"}
                     </Typography>
                     <Typography variant="body2">
                       {item?.gameDescription}
@@ -144,7 +144,7 @@ function PlayedList({ gameList, totalGameNum }) {
                   </StyledListSection>
 
                   <StyledFabSection>
-                    {item?.createdBy === user.uid ? (
+                    {item?.createdBy === user.id ? (
                       <Fab
                         id="gameDeleteBtn"
                         key={item?.id}
@@ -170,7 +170,7 @@ function PlayedList({ gameList, totalGameNum }) {
                         handleGameMenuClick(item.id);
                       }}
                     >
-                      {item?.createdBy === user.uid ? (
+                      {item?.createdBy === user.id ? (
                         <EditIcon />
                       ) : (
                         <VisibilityIcon />

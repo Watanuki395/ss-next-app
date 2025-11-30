@@ -41,12 +41,25 @@ export const onGetLinks = (collectionName, callback) => {
 };
 
 export const getGamesByUserId = (userId, callback) => {
+  if (!userId) {
+    // No user id provided - immediately callback with empty array and no subscription
+    console.warn('getGamesByUserId called with empty userId');
+    callback([]);
+    return () => {};
+  }
   // Initial fetch
   const fetchGames = async () => {
     const { data: games, error } = await supabase
       .from('games')
       .select('*')
       .contains('players', [{ id: userId }]);
+
+    if (error) {
+      console.error('Error getting games for user', userId, error);
+      // Ensure the callback always gets called so UI can update
+      callback([]);
+      return;
+    }
 
     if (!error) {
       callback(games || []);
@@ -129,19 +142,65 @@ export const getDocWhereGameId = (collectionName, gameId, callback) => {
   }
 };
 
+// Obtener un juego por su código público (game_id)
+export const getDocWhereGameCode = (collectionName, gameCode, callback) => {
+  try {
+    // Initial fetch
+    const fetchGame = async () => {
+      const { data, error } = await supabase
+        .from(collectionName)
+        .select('*')
+        .eq('game_id', gameCode)
+        .single();
+
+      if (error) {
+        callback({ success: false, message: 'No se encontró ningún juego con ese código.' });
+      } else {
+        callback({ success: true, data: data });
+      }
+    };
+
+    fetchGame();
+
+    // Realtime subscription
+    const channel = supabase
+      .channel(`${collectionName}_code_${gameCode}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: collectionName, filter: `game_id=eq.${gameCode}` },
+        async () => {
+          await fetchGame();
+        }
+      )
+      .subscribe();
+
+    return () => supabase.removeChannel(channel);
+  } catch (error) {
+    console.error('Error al obtener el juego por código:', error);
+    callback({ success: false, message: 'Error al obtener el juego por código', error: error.message });
+  }
+};
+
 // Función para buscar un juego por su gameId
 const findGameByGameId = async (gameId) => {
-  const { data, error } = await supabase
+  // Try querying by snake_case field first (game_id), then fallback to camelCase (gameId)
+  const { data: dataBySnake, error: errSnake } = await supabase
+    .from('games')
+    .select('*')
+    .eq('game_id', gameId)
+    .single();
+
+  if (!errSnake && dataBySnake) return dataBySnake;
+
+  const { data: dataByCamel, error: errCamel } = await supabase
     .from('games')
     .select('*')
     .eq('gameId', gameId)
     .single();
 
-  if (error || !data) {
-    return null;
-  }
+  if (!errCamel && dataByCamel) return dataByCamel;
 
-  return data;
+  return null;
 };
 
 export const addParticipantToGame = async (gameId, userId, fname) => {
@@ -502,5 +561,82 @@ export const removeParticipantFromGame = async (gameId, userId) => {
       message: `Error al remover usuario ${userId} del juego ${gameId} con el error ${error.message}`,
       error: error.message,
     };
+  }
+};
+
+// Wishlist Operations
+
+export const getWishlist = async (userId) => {
+  try {
+    const { data, error } = await supabase
+      .from("wishlists")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    return { success: true, data };
+  } catch (error) {
+    console.error("Error fetching wishlist:", error);
+    return { success: false, message: error.message };
+  }
+};
+
+export const addToWishlist = async (userId, item) => {
+  try {
+    const { data, error } = await supabase
+      .from("wishlists")
+      .insert([
+        {
+          user_id: userId,
+          item_name: item.itemName,
+          item_link: item.itemLink,
+          item_price: item.itemPrice,
+          item_note: item.itemNote,
+        },
+      ])
+      .select();
+
+    if (error) throw error;
+    return { success: true, data, message: "Deseo agregado correctamente" };
+  } catch (error) {
+    console.error("Error adding to wishlist:", error);
+    return { success: false, message: error.message };
+  }
+};
+
+export const updateWishlistItem = async (itemId, updates) => {
+  try {
+    const { data, error } = await supabase
+      .from("wishlists")
+      .update({
+        item_name: updates.itemName,
+        item_link: updates.itemLink,
+        item_price: updates.itemPrice,
+        item_note: updates.itemNote,
+      })
+      .eq("id", itemId)
+      .select();
+
+    if (error) throw error;
+    return { success: true, data, message: "Deseo actualizado correctamente" };
+  } catch (error) {
+    console.error("Error updating wishlist item:", error);
+    return { success: false, message: error.message };
+  }
+};
+
+export const deleteWishlistItem = async (itemId) => {
+  try {
+    const { error } = await supabase
+      .from("wishlists")
+      .delete()
+      .eq("id", itemId);
+
+    if (error) throw error;
+    return { success: true, message: "Deseo eliminado correctamente" };
+  } catch (error) {
+    console.error("Error deleting wishlist item:", error);
+    return { success: false, message: error.message };
   }
 };

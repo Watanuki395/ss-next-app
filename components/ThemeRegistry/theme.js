@@ -1,4 +1,4 @@
-import { Roboto_Mono } from "next/font/google";
+import { Roboto_Mono, Inter, Poppins } from "next/font/google";
 import { createTheme, css } from "@mui/material/styles";
 
 const roboto = Roboto_Mono({
@@ -7,83 +7,96 @@ const roboto = Roboto_Mono({
   display: "swap",
 });
 
+const inter = Inter({
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const poppins = Poppins({
+  weight: ["400", "500", "600", "700", "800"],
+  subsets: ["latin"],
+  display: "swap",
+});
+
 export const lightTheme = createTheme({
   palette: {
     mode: "light",
-    // Tema claro
     primary: {
-      main: "#937b71",
+      main: "#D32F2F",
+      light: "#FF6659",
+      dark: "#9A0007",
     },
     secondary: {
-      main: "#f6e7e0",
+      main: "#1B5E20",
+      light: "#4C8C4A",
+      dark: "#003300",
     },
     error: {
       main: "#c83e4d",
     },
     background: {
-      default: "#fffde7",
-      paper: "#fff9c4",
+      default: "#FFFFFF",
+      paper: "#FFFFFF",
     },
     text: {
-      primary: "#28201e",
-      secondary: "#4f4f4f",
+      primary: "#212121",
+      secondary: "#616161",
     },
   },
   typography: {
-    fontFamily: roboto.style.fontFamily,
+    fontFamily: inter.style.fontFamily,
+    h1: {
+      fontFamily: poppins.style.fontFamily,
+    },
+    h2: {
+      fontFamily: poppins.style.fontFamily,
+    },
+    h3: {
+      fontFamily: poppins.style.fontFamily,
+    },
+    h4: {
+      fontFamily: poppins.style.fontFamily,
+    },
+    h5: {
+      fontFamily: poppins.style.fontFamily,
+    },
+    h6: {
+      fontFamily: poppins.style.fontFamily,
+    },
   },
   components: {
-    MuiAlert: {
+    MuiCssBaseline: {
       styleOverrides: {
-        root: ({ ownerState }) => ({
-          ...(ownerState.severity === "info" && {
-            backgroundColor: "#60a5fa",
-          }),
-        }),
+        body: {
+          backgroundColor: "#FFFFFF",
+          color: "#212121",
+        },
       },
     },
     MuiTextField: {
       styleOverrides: {
         root: {
-          // Cambia los estilos de todos los TextField
-          // Por ejemplo, puedes cambiar el color de fondo y el color del texto
-          backgroundColor: "inherit",
-          color: "#FFFFFF",
-          input: {
-            "&:-webkit-autofill": {
-              WebkitBoxShadow: "0 0 0 100px #fde7be  inset",
-              WebkitTextFillColor: "default",
+          "& .MuiOutlinedInput-root": {
+            backgroundColor: "#FFFFFF",
+            "& input": {
+              color: "#212121",
+            },
+            "& fieldset": {
+              borderColor: "#E0E0E0",
+            },
+            "&:hover fieldset": {
+              borderColor: "#D32F2F",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "#D32F2F",
             },
           },
-        },
-      },
-    },
-    MuiContainer: {
-      styleOverrides: {
-        root: {
-          width: "100%",
-          minWidth: "90%",
-        },
-      },
-    },
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          borderRadius: "10px",
-          overflow: "visible",
-          transition: "box-shadow 0.3s ease-in-out",
-          "&:hover": {
-            //boxShadow: "0px 0px 20px #575d82",
-          },
-        },
-      },
-    },
-    MuiFab: {
-      styleOverrides: {
-        root: {
-          transition: "box-shadow 0.3s ease-in-out",
-          "&:hover": {
-            boxShadow: "0px 0px 5px #575d82",
+          "& .MuiInputLabel-root": {
+            color: "#757575",
+            "&.Mui-focused": {
+              color: "#D32F2F",
+            },
           },
         },
       },
@@ -91,121 +104,204 @@ export const lightTheme = createTheme({
     MuiPickersLayout: {
       styleOverrides: {
         root: {
-          backgroundColor: "rgb(30,30,30)",
+          backgroundColor: "#FFFFFF",
+          "& .MuiPickersCalendarHeader-root": {
+            backgroundColor: "#FFFFFF",
+            color: "#212121",
+          },
+          "& .MuiDayCalendar-header": {
+            backgroundColor: "#FFFFFF",
+          },
+          "& .MuiPickersDay-root": {
+            color: "#212121",
+            backgroundColor: "#FFFFFF",
+            "&:hover": {
+              backgroundColor: "#FAFAFA",
+            },
+            "&.Mui-selected": {
+              backgroundColor: "#D32F2F",
+              color: "#FFFFFF",
+              "&:hover": {
+                backgroundColor: "#9A0007",
+              },
+            },
+          },
+          "& .MuiPickersYear-yearButton": {
+            color: "#212121",
+            "&.Mui-selected": {
+              backgroundColor: "#D32F2F",
+              color: "#FFFFFF",
+            },
+          },
+        },
+      },
+    },
+    MuiPickersCalendarHeader: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#FFFFFF",
+          color: "#212121",
+          "& .MuiPickersCalendarHeader-label": {
+            color: "#212121",
+          },
+          "& .MuiIconButton-root": {
+            color: "#212121",
+          },
+        },
+      },
+    },
+    MuiPickersDay: {
+      styleOverrides: {
+        root: {
+          color: "#212121",
+          backgroundColor: "#FFFFFF",
+          "&:hover": {
+            backgroundColor: "#F5F5F5",
+          },
+          "&.Mui-selected": {
+            backgroundColor: "#D32F2F",
+            color: "#FFFFFF",
+            "&:hover": {
+              backgroundColor: "#9A0007",
+            },
+          },
+          "&.MuiPickersDay-today": {
+            border: "1px solid #D32F2F",
+          },
         },
       },
     },
     MuiDialogActions: {
       styleOverrides: {
         root: {
-          backgroundColor: "rgb(10,10,10)",
-          fontSize: "30px",
+          backgroundColor: "#FFFFFF",
+          padding: "16px",
         },
       },
     },
-    MuiToggleButton: {
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: "#FFFFFF",
+          color: "#212121",
+        },
+      },
+    },
+    MuiPaper: {
       styleOverrides: {
         root: {
-          backgroundColor: "#cd881c36",
-          "&:hover": {
-            backgroundColor: "#cd881c5c",
-            boxShadow: "0px 0px 5px #575d82",
-          },
+          backgroundColor: "#FFFFFF",
+          color: "#212121",
         },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: "none",
+          fontFamily: poppins.style.fontFamily,
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: "12px",
+          backgroundColor: "#FFFFFF",
+        },
+      },
+    },
+    MuiAlert: {
+      styleOverrides: {
+        root: ({ ownerState }) => ({
+          ...(ownerState.severity === "info" && {
+            backgroundColor: "#E3F2FD",
+            color: "#1976D2",
+          }),
+        }),
       },
     },
   },
-  sbg: "#937b71",
-  bg: "#f6e7e0",
-  bgAlpha: "#f6e7e0",
-  bg2: "#fdcda9",
-  bg3: "rgb(252, 230, 190, .50)",
-  bg4: "#fde7be",
-  text: "#28201e",
-  primary: "#70331e",
-  deleteText: "#21060b",
-  viewText: "#34352d",
-  textFieldHover: "#d6d5e6",
-  TextFieldBorder: "#d6d5e6",
 });
 
 export const darkTheme = createTheme({
   palette: {
     mode: "dark",
-    // Tema oscuro
     primary: {
-      main: "#3f51b5",
+      main: "#FF6659",
+      light: "#FF8A80",
+      dark: "#D32F2F",
     },
     secondary: {
-      main: "#847577",
+      main: "#4C8C4A",
+      light: "#66BB6A",
+      dark: "#1B5E20",
     },
     error: {
-      main: "#c83e4d",
+      main: "#EF5350",
     },
     background: {
-      default: "#1e1e1e",
-      paper: "#212529",
+      default: "#121212",
+      paper: "#1E1E1E",
     },
     text: {
-      primary: "#ffffff",
-      secondary: "#b8c2cc",
+      primary: "#FFFFFF",
+      secondary: "#B0B0B0",
     },
   },
   typography: {
-    fontFamily: roboto.style.fontFamily,
+    fontFamily: inter.style.fontFamily,
+    h1: {
+      fontFamily: poppins.style.fontFamily,
+    },
+    h2: {
+      fontFamily: poppins.style.fontFamily,
+    },
+    h3: {
+      fontFamily: poppins.style.fontFamily,
+    },
+    h4: {
+      fontFamily: poppins.style.fontFamily,
+    },
+    h5: {
+      fontFamily: poppins.style.fontFamily,
+    },
+    h6: {
+      fontFamily: poppins.style.fontFamily,
+    },
   },
   components: {
-    MuiAlert: {
+    MuiCssBaseline: {
       styleOverrides: {
-        root: ({ ownerState }) => ({
-          ...(ownerState.severity === "info" && {
-            backgroundColor: "#60a5fa",
-          }),
-        }),
+        body: {
+          backgroundColor: "#121212",
+          color: "#FFFFFF",
+        },
       },
     },
     MuiTextField: {
       styleOverrides: {
         root: {
-          // Cambia los estilos de todos los TextField
-          // Por ejemplo, puedes cambiar el color de fondo y el color del texto
-          backgroundColor: "inherit",
-          color: "#FFFFFF",
-          input: {
-            "&:-webkit-autofill": {
-              WebkitBoxShadow: "0 0 0 100px rgb(57, 60, 63)  inset",
-              WebkitTextFillColor: "default",
+          "& .MuiOutlinedInput-root": {
+            backgroundColor: "#2C2C2C",
+            "& input": {
+              color: "#FFFFFF",
+            },
+            "& fieldset": {
+              borderColor: "#505050",
+            },
+            "&:hover fieldset": {
+              borderColor: "#FF6659",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "#FF6659",
             },
           },
-        },
-      },
-    },
-    MuiContainer: {
-      styleOverrides: {
-        root: {
-          width: "100%",
-          minWidth: "90%",
-        },
-      },
-    },
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          borderRadius: "10px",
-          overflow: "visible",
-          transition: "box-shadow 0.3s ease-in-out",
-          "&:hover": {
-            //boxShadow: "0px 0px 20px #575d82",
-          },
-        },
-      },
-    },
-    MuiFab: {
-      styleOverrides: {
-        root: {
-          transition: "box-shadow 0.3s ease-in-out",
-          "&:hover": {
-            boxShadow: "0px 0px 5px #575d82",
+          "& .MuiInputLabel-root": {
+            color: "#B0B0B0",
+            "&.Mui-focused": {
+              color: "#FF6659",
+            },
           },
         },
       },
@@ -213,56 +309,229 @@ export const darkTheme = createTheme({
     MuiPickersLayout: {
       styleOverrides: {
         root: {
-          backgroundColor: "rgb(30,30,30)",
+          backgroundColor: "#1E1E1E",
+          color: "#FFFFFF",
+          "& .MuiPickersCalendarHeader-root": {
+            backgroundColor: "#1E1E1E",
+            color: "#FFFFFF",
+          },
+          "& .MuiDayCalendar-header": {
+            backgroundColor: "#1E1E1E",
+            "& .MuiTypography-root": {
+              color: "#B0B0B0",
+            },
+          },
+          "& .MuiPickersDay-root": {
+            color: "#FFFFFF",
+            backgroundColor: "#1E1E1E",
+            "&:hover": {
+              backgroundColor: "#2C2C2C",
+            },
+            "&.Mui-selected": {
+              backgroundColor: "#FF6659",
+              color: "#FFFFFF",
+              fontWeight: 600,
+              "&:hover": {
+                backgroundColor: "#FF8A80",
+              },
+            },
+            "&.Mui-disabled": {
+              color: "#505050",
+            },
+          },
+          "& .MuiPickersYear-yearButton": {
+            color: "#FFFFFF",
+            "&.Mui-selected": {
+              backgroundColor: "#FF6659",
+              color: "#FFFFFF",
+            },
+          },
+        },
+      },
+    },
+    MuiPickersCalendarHeader: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#1E1E1E",
+          color: "#FFFFFF",
+          "& .MuiPickersCalendarHeader-label": {
+            color: "#FFFFFF",
+            fontSize: "1rem",
+            fontWeight: 600,
+          },
+          "& .MuiIconButton-root": {
+            color: "#FFFFFF",
+            "&:hover": {
+              backgroundColor: "#2C2C2C",
+            },
+          },
+        },
+      },
+    },
+    MuiPickersDay: {
+      styleOverrides: {
+        root: {
+          color: "#FFFFFF",
+          backgroundColor: "#1E1E1E",
+          fontSize: "0.9rem",
+          "&:hover": {
+            backgroundColor: "#2C2C2C",
+          },
+          "&.Mui-selected": {
+            backgroundColor: "#FF6659",
+            color: "#FFFFFF",
+            fontWeight: 600,
+            "&:hover": {
+              backgroundColor: "#FF8A80",
+            },
+          },
+          "&.MuiPickersDay-today": {
+            border: "2px solid #FF6659",
+            fontWeight: 600,
+          },
+          "&.Mui-disabled": {
+            color: "#505050",
+          },
         },
       },
     },
     MuiDialogActions: {
       styleOverrides: {
         root: {
-          backgroundColor: "rgb(10,10,10)",
-          fontSize: "30px",
+          backgroundColor: "#1E1E1E",
+          padding: "16px",
+          borderTop: "1px solid #2C2C2C",
         },
       },
     },
-    MuiToggleButton: {
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: "#1E1E1E",
+          color: "#FFFFFF",
+          backgroundImage: "none",
+        },
+      },
+    },
+    MuiPaper: {
       styleOverrides: {
         root: {
-          backgroundColor: "#cd881c36",
-          "&:hover": {
-            backgroundColor: "#cd881c5c",
-            boxShadow: "0px 0px 5px #575d82",
+          backgroundColor: "#1E1E1E",
+          color: "#FFFFFF",
+          backgroundImage: "none",
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: "none",
+          fontFamily: poppins.style.fontFamily,
+        },
+        contained: {
+          "&.MuiButton-containedPrimary": {
+            backgroundColor: "#FF6659",
+            color: "#FFFFFF",
+            "&:hover": {
+              backgroundColor: "#FF8A80",
+            },
+          },
+        },
+        outlined: {
+          "&.MuiButton-outlinedPrimary": {
+            borderColor: "#FF6659",
+            color: "#FF6659",
+            "&:hover": {
+              borderColor: "#FF8A80",
+              backgroundColor: "rgba(255, 102, 89, 0.1)",
+            },
           },
         },
       },
     },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: "12px",
+          backgroundColor: "#1E1E1E",
+          backgroundImage: "none",
+        },
+      },
+    },
+    MuiAlert: {
+      styleOverrides: {
+        root: ({ ownerState }) => ({
+          ...(ownerState.severity === "info" && {
+            backgroundColor: "#1976D2",
+            color: "#FFFFFF",
+          }),
+          ...(ownerState.severity === "error" && {
+            backgroundColor: "#D32F2F",
+            color: "#FFFFFF",
+          }),
+          ...(ownerState.severity === "success" && {
+            backgroundColor: "#388E3C",
+            color: "#FFFFFF",
+          }),
+          ...(ownerState.severity === "warning" && {
+            backgroundColor: "#F57C00",
+            color: "#FFFFFF",
+          }),
+        }),
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#2C2C2C",
+          color: "#FFFFFF",
+          "&.MuiChip-outlined": {
+            borderColor: "#505050",
+          },
+        },
+      },
+    },
+    MuiDivider: {
+      styleOverrides: {
+        root: {
+          borderColor: "#2C2C2C",
+        },
+      },
+    },
   },
-  sbg: "rgb(147,147,160)",
-  bg: "rgb(255,255,255)",
-  bgAlpha: "rgba(250,250,250,.3)",
-  bg2: "rgb(190,200,205, .5)",
-  bg3: "rgb(57, 60, 63)",
-  bg4: "rgb(253,205,169, .5)", // Peach / Melocotón
-  text: "rgb(214, 214, 214)",
-  primary: "rgb(52, 131, 235)",
-  deleteText: "crimson",
-  viewText: "darkblue",
-  textFieldHover: "#a9a8ad",
-  TextFieldBorder: "#d6d5e6",
 });
 
 export const globalStyles = css`
-  :root {
-    body {
-      //background-color: #fdcda9;
-      //color: #2d2d2d;
-    }
+  * {
+    box-sizing: border-box;
   }
 
-  [data-theme="dark"] {
-    body {
-      //background-color: #1e1e1e;
-      //color: #d2d2d2;
-    }
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Asegurar que los inputs tengan buen contraste */
+  input,
+  textarea,
+  select {
+    color: inherit !important;
+  }
+  
+  /* Fix para autocomplete */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+    -webkit-text-fill-color: #212121 !important;
+  }
+  
+  [data-theme="dark"] input:-webkit-autofill,
+  [data-theme="dark"] input:-webkit-autofill:hover,
+  [data-theme="dark"] input:-webkit-autofill:focus,
+  [data-theme="dark"] input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #2C2C2C inset !important;
+    -webkit-text-fill-color: #FFFFFF !important;
   }
 `;
