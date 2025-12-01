@@ -1,21 +1,21 @@
 import { createClient } from '@supabase/supabase-js';
-import { Resend } from 'resend';
+import FormData from 'form-data';
+import Mailgun from 'mailgun.js';
 import { SecretSantaEmail } from '@/components/emails/SecretSantaEmail';
+import { render } from '@react-email/render';
 import { NextResponse } from 'next/server';
 
-// Initialize Supabase Admin Client (to bypass RLS for updates if needed, though we should use RLS properly)
-// For this route, we might need service role key if we want to ensure absolute authority, 
-// but standard client with user token is better if we pass the token. 
-// However, for simplicity in this server route, we'll use the public key and rely on RLS 
-// (assuming the user calling this is the creator).
-// Actually, for server-side operations that might affect multiple users, a service role is often safer 
-// but let's try with the standard client first or just use the environment variables.
-
+// Initialize Supabase Admin Client to bypass RLS for updates
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Initialize Mailgun
+const mailgun = new Mailgun(FormData);
+const mg = mailgun.client({
+  username: 'api',
+  key: process.env.MAILGUN_API_KEY || 'dummy',
+});
 
 function assignSecretSanta(participants) {
   const n = participants.length;
@@ -23,8 +23,7 @@ function assignSecretSanta(participants) {
 
   let givers = [...participants];
   let receivers = [...participants];
-  let assignments = [];
-
+  
   let valid = false;
   let attempts = 0;
   
@@ -60,78 +59,133 @@ function assignSecretSanta(participants) {
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { gameId, organizerEmail } = body;
+    const { gameId, organizerEmail, resendOnly } = body;
 
     if (!gameId) {
       return NextResponse.json({ error: 'Game ID required' }, { status: 400 });
     }
 
+    console.log("API Draw received gameId:", gameId);
+
     // 1. Fetch Game Data
     const { data: game, error: fetchError } = await supabase
       .from('games')
       .select('*')
-      .eq('game_id', gameId) // Assuming game_id is the public ID
+      .eq('id', gameId)
       .single();
+
+    if (fetchError) {
+      console.error("Supabase fetch error:", fetchError);
+    }
+    if (!game) {
+      console.error("Game not found for ID:", gameId);
+    }
 
     if (fetchError || !game) {
       return NextResponse.json({ error: 'Juego no encontrado' }, { status: 404 });
     }
 
-    const participants = game.players || [];
+    let participants = game.players || [];
 
     if (participants.length < 3) {
       return NextResponse.json({ error: 'Se necesitan al menos 3 participantes' }, { status: 400 });
     }
 
-    // 2. Run Algorithm
-    const assignmentMap = assignSecretSanta(participants);
+    // 1.5 Fetch Emails for Participants
+    // The players array might not have emails, so we fetch them from the users table
+    const playerIds = participants.map(p => p.id);
+    const { data: usersData, error: usersError } = await supabase
+      .from('users')
+      .select('id, email')
+      .in('id', playerIds);
 
-    // 3. Update Participants with Assignments
-    const updatedParticipants = participants.map(p => ({
-      ...p,
-      assignedTo: {
-        id: assignmentMap[p.id].id,
-        name: assignmentMap[p.id].userName // Save name for easier display
+    if (!usersError && usersData) {
+      // Merge emails into participants
+      participants = participants.map(p => {
+        const user = usersData.find(u => u.id === p.id);
+        return {
+          ...p,
+          email: user ? user.email : p.email
+        };
+      });
+    }
+
+    let updatedParticipants = [...participants];
+    let assignmentMap = {};
+
+    // If we are just resending emails, we use existing assignments
+    if (resendOnly && game.game_active) {
+      // Reconstruct assignment map from existing data
+      participants.forEach(p => {
+        if (p.assignedTo) {
+          // We need the full receiver object, but assignedTo only has id and name.
+          // We find the receiver in the participants list.
+          const receiver = participants.find(r => r.id === p.assignedTo.id);
+          if (receiver) {
+            assignmentMap[p.id] = receiver;
+          }
+        }
+      });
+    } else {
+      // 2. Run Algorithm (New Draw)
+      assignmentMap = assignSecretSanta(participants);
+
+      // 3. Update Participants with Assignments
+      updatedParticipants = participants.map(p => ({
+        ...p,
+        assignedTo: {
+          id: assignmentMap[p.id].id,
+          name: assignmentMap[p.id].userName
+        }
+      }));
+
+      // 4. Save to DB
+      const { error: updateError } = await supabase
+        .from('games')
+        .update({ 
+          players: updatedParticipants,
+          game_active: true 
+        })
+        .eq('id', game.id);
+
+      if (updateError) {
+        console.error("Error updating game:", updateError);
+        return NextResponse.json({ error: 'Error guardando asignaciones' }, { status: 500 });
       }
-    }));
-
-    // 4. Save to DB
-    const { error: updateError } = await supabase
-      .from('games')
-      .update({ 
-        players: updatedParticipants,
-        game_active: true // Mark as active/drawn
-      })
-      .eq('id', game.id); // Use internal UUID
-
-    if (updateError) {
-      console.error("Error updating game:", updateError);
-      return NextResponse.json({ error: 'Error guardando asignaciones' }, { status: 500 });
     }
 
     // 5. Send Emails
     const emailPromises = updatedParticipants.map(async (giver) => {
       try {
         const receiver = assignmentMap[giver.id];
+        if (!receiver) return { success: false, error: "No assignment found" };
+
         // Development mode restriction
         const sendTo = process.env.NODE_ENV === 'development' ? organizerEmail : giver.email;
         
-        // Skip if no email (e.g. manually added user without email)
-        if (!giver.email) return { success: true, skipped: true };
+        if (!giver.email) return { success: true, skipped: true, reason: "No email" };
 
-        await resend.emails.send({
-          from: 'Secret Santa <onboarding@resend.dev>',
+        const emailHtml = await render(SecretSantaEmail({
+          recipientName: giver.userName,
+          organizerName: "El Organizador",
+          gameName: game.game_name,
+          gifteeName: receiver.userName,
+          budget: game.game_amount,
+          eventDate: game.date_of_game,
+        }));
+
+        console.log("Generated HTML length:", emailHtml.length);
+
+        const domain = process.env.MAILGUN_DOMAIN;
+        const fromEmail = `Secret Santa <mailgun@${domain}>`;
+
+        await mg.messages.create(domain, {
+          from: fromEmail,
           to: [sendTo],
           subject: `🎁 Tu asignación para: ${game.game_name}`,
-          react: SecretSantaEmail({
-            recipientName: giver.userName,
-            organizerName: "El Organizador", // Could fetch organizer name
-            gameName: game.game_name,
-            gifteeName: receiver.userName,
-            budget: game.game_amount,
-            eventDate: game.date_of_game,
-          }),
+          html: emailHtml,
         });
+
         return { success: true, recipient: giver.email };
       } catch (error) {
         console.error(`Error sending to ${giver.email}:`, error);
@@ -143,7 +197,7 @@ export async function POST(request) {
 
     return NextResponse.json({ 
       success: true, 
-      message: 'Sorteo realizado y correos enviados' 
+      message: resendOnly ? 'Correos reenviados exitosamente' : 'Sorteo realizado y correos enviados' 
     });
 
   } catch (error) {

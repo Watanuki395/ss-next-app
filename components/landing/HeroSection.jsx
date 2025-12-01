@@ -1,10 +1,12 @@
 "use client";
-import React from "react";
-import { Box, Container, Typography, Button, Stack } from "@mui/material";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Box, Container, Typography, Button, Stack, TextField, Paper } from "@mui/material";
 import { styled, keyframes } from "@mui/material/styles";
 import Link from "next/link";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import SearchIcon from "@mui/icons-material/Search";
 
 // Animaciones
 const float = keyframes`
@@ -266,6 +268,21 @@ const StatItem = styled(Box)(({ theme }) => ({
 }));
 
 export default function HeroSection() {
+  const router = useRouter();
+  const [gameCode, setGameCode] = useState("");
+
+  const handleSearchGame = () => {
+    if (gameCode.trim()) {
+      router.push(`/game/status/${gameCode.trim()}`);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearchGame();
+    }
+  };
+
   // Generar partículas de nieve
   const snowflakes = Array.from({ length: 50 }, (_, i) => ({
     id: i,
@@ -324,7 +341,7 @@ export default function HeroSection() {
         {/* Headline principal */}
         <MainHeadline variant="h1">
           ¿Cansado de que siempre descubran{" "}
-          <span className="highlight">quién te toca</span> en el Amigo Secreto?
+          <span className="highlight">quién te dara regalo</span> en el Amigo Secreto?
         </MainHeadline>
 
         {/* Subheadline */}
@@ -377,6 +394,76 @@ export default function HeroSection() {
             </CTAButton>
           </Link>
         </Stack>
+
+        {/* Game Code Search Section */}
+        <Paper
+          elevation={3}
+          sx={{
+            mt: 6,
+            p: 3,
+            maxWidth: "600px",
+            mx: "auto",
+            borderRadius: "16px",
+            background: "rgba(255, 255, 255, 0.95)",
+            backdropFilter: "blur(10px)",
+            animation: `${fadeInUp} 0.8s ease-out 0.6s both`,
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 600,
+              color: "#D32F2F",
+              mb: 2,
+              textAlign: "center",
+            }}
+          >
+            ¿Ya tienes un código de juego?
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              color: "#D32F2F",
+              mb: 2,
+              textAlign: "center",
+            }}
+          >
+            Ingresa tu código para ver el estado del juego
+          </Typography>
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <TextField
+              fullWidth
+              placeholder="Ej: ABC123"
+              variant="outlined"
+              value={gameCode}
+              onChange={(e) => setGameCode(e.target.value.toUpperCase())}
+              onKeyPress={handleKeyPress}
+              InputProps={{
+                startAdornment: <SearchIcon sx={{ mr: 1, color: "#D32F2F" }} />,
+              }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "12px",
+                },
+              }}
+            />
+            <Button
+              variant="contained"
+              onClick={handleSearchGame}
+              disabled={!gameCode.trim()}
+              sx={{
+                minWidth: "120px",
+                borderRadius: "12px",
+                backgroundColor: "#D32F2F",
+                "&:hover": {
+                  backgroundColor: "#B71C1C",
+                },
+              }}
+            >
+              Buscar
+            </Button>
+          </Box>
+        </Paper>
 
         {/* Estadísticas */}
         <StatsContainer>

@@ -98,9 +98,8 @@ const GameCard = ({ game, onClick }) => {
       {/* Show game code */}
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
         <Link href={`/join/${game.game_id || game.gameId || (game.id || '').slice(0, 6)}`}>
-          <a>
             <Chip label={game.game_id || game.gameId || (game.id || '').slice(0, 6)} size="small" variant="outlined" clickable />
-          </a>
+
         </Link>
       </Box>
     </CardPaper>

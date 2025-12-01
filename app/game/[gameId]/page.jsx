@@ -150,7 +150,7 @@ export default function GameDetailsPage({ params }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          gameId: game.game_id,
+          gameId: game.id,
           organizerEmail: user.email 
         })
       });
@@ -332,6 +332,55 @@ export default function GameDetailsPage({ params }) {
                         Mínimo 3 participantes
                       </Typography>
                     )}
+                  </Paper>
+                )}
+
+                {isOrganizer && !isDraft && (
+                  <Paper sx={{ p: 3, borderRadius: "24px", bgcolor: theme.palette.secondary.light, color: "white" }}>
+                    <Typography variant="h6" fontWeight="bold" gutterBottom>
+                      Opciones de Organizador
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 2, opacity: 0.9 }}>
+                      ¿Alguien olvidó a quién le regala? Puedes reenviar los correos.
+                    </Typography>
+                    <Button 
+                      variant="contained" 
+                      fullWidth 
+                      size="large"
+                      onClick={async () => {
+                        if (!confirm("¿Reenviar correos a todos los participantes?")) return;
+                        setDrawing(true);
+                        try {
+                          const response = await fetch('/api/game/draw', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ 
+                              gameId: game.id,
+                              organizerEmail: user.email,
+                              resendOnly: true
+                            })
+                          });
+                          const data = await response.json();
+                          if (response.ok) {
+                            setNotify({ isOpen: true, type: "success", title: "Correos Enviados", message: "Se han reenviado los correos exitosamente." });
+                          } else {
+                            throw new Error(data.error || "Error al reenviar");
+                          }
+                        } catch (error) {
+                          setNotify({ isOpen: true, type: "error", title: "Error", message: error.message });
+                        } finally {
+                          setDrawing(false);
+                        }
+                      }}
+                      disabled={drawing}
+                      sx={{ 
+                        bgcolor: "white", 
+                        color: theme.palette.secondary.main,
+                        "&:hover": { bgcolor: "rgba(255,255,255,0.9)" }
+                      }}
+                    >
+                      {drawing ? "Enviando..." : "Reenviar Correos 📧"}
+                    </Button>
                   </Paper>
                 )}
 

@@ -154,7 +154,7 @@ const features = [
     description:
       "Sin registro, sin complicaciones. Solo ingresa los emails de los participantes y listo. El sistema asigna automáticamente y envía las notificaciones en segundos.",
     benefits: ["Sin crear cuenta", "Asignación instantánea", "Emails automáticos"],
-    link: "/quick-play",
+    link: "/about",
     featured: false,
   },
   {
@@ -174,7 +174,7 @@ const features = [
     description:
       "Regístrate para acceder a todas las funciones: dashboard personalizado, listas de deseos, presupuestos, recordatorios automáticos y mucho más.",
     benefits: ["Dashboard completo", "Listas de deseos", "Notificaciones"],
-    link: "/register",
+    link: "/about",
     featured: false,
   },
 ];

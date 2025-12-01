@@ -294,9 +294,7 @@ function Dashboard() {
                   <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                     {games.filter(g => g.game_active || g.gameActive).slice(0, 8).map(g => (
                       <Link key={g.id || g.gameId || g.game_id} href={`/join/${g.game_id || g.gameId || (g.id || '').slice(0,6)}`}>
-                        <a>
-                          <Chip label={g.game_id || g.gameId || g.gameId?.toUpperCase() || (g.id || '').slice(0, 6)} size="small" clickable />
-                        </a>
+                        <Chip label={g.game_id || g.gameId || g.gameId?.toUpperCase() || (g.id || '').slice(0, 6)} size="small" clickable />
                       </Link>
                     ))}
                   </Box>

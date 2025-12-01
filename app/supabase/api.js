@@ -52,7 +52,7 @@ export const getGamesByUserId = (userId, callback) => {
     const { data: games, error } = await supabase
       .from('games')
       .select('*')
-      .contains('players', [{ id: userId }]);
+      .contains('players', JSON.stringify([{ id: userId }]));
 
     if (error) {
       console.error('Error getting games for user', userId, error);
@@ -288,7 +288,7 @@ export const deleteGameWithUserUpdates = async (userId, gameId) => {
     const { data: userDocs, error: fetchError } = await supabase
       .from('users')
       .select('*')
-      .contains('games', [gameId]);
+      .contains('games', JSON.stringify([gameId]));
 
     if (fetchError) throw fetchError;
 

@@ -108,12 +108,12 @@ function GamePage() {
       const dayOfGifs = vals.dateOfGame.toISOString();
       const gameID = generateUniqueGameID(user.id);
       const data = {
-        gameName: vals.gameName,
-        gameDescription: vals.gameDescription,
-        dateOfGame: dayOfGifs,
-        gameAmount: vals.gameAmount,
-        gameActive: null,
-        gameId: gameID,
+        game_name: vals.gameName,
+        game_description: vals.gameDescription,
+        date_of_game: dayOfGifs,
+        game_amount: vals.gameAmount,
+        game_active: null,
+        game_id: gameID,
         players: [{ id: user.id, userName: userInfo.fname, playing: true }],
       };
       if (data && user?.id && collectionName) {
